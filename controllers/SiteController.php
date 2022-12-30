@@ -34,7 +34,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['get'],
                 ],
             ],
         ];
@@ -75,9 +75,16 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        if (!Yii::$app->user->isGuest) {
+            return $this->render('login');
+        }
 
         $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->render('index');
+        }
 
+        $model->password = '';
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -91,7 +98,6 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-        $USERNAME = 123;
         return $this->goHome();
     }
 
@@ -122,6 +128,10 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+    public function actionResetPassword()
+    {
+        return $this->render('resetPassword');
+    }
     public function actionSignUp()
     {
         if (!Yii::$app->user->isGuest) {
@@ -138,7 +148,7 @@ class SiteController extends Controller
             $user->organization = $model->organization;
             if ($user->save()){
                 Yii::$app->user->login($user);
-                return $this->goHome();
+                return $this->render('index');
             }
         }
         return $this->render('signup',compact('model'));

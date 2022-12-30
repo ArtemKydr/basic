@@ -35,14 +35,16 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
-    if ($validate == true){
+    if (!Yii::$app->user->isGuest){
         echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
             ['label' => 'О науке', 'url' => ['/site/index']],
             ['label' => 'Инфраструктура', 'url' => ['/site/about']],
             ['label' => 'Руководителю', 'url' => ['/site/contact']],
-            ['label' => 'Выход', 'url' => ['/site/logout']],
+            ['label' => 'Выход (' . Yii::$app->user->identity->username . ')',
+                'url' => ['/site/logout'],
+                'linkOptions' => ['data-method' => 'get']],
             ]]);
     }else {
         echo Nav::widget([

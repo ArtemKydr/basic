@@ -3,6 +3,7 @@
 namespace app\models;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use Yii;
 
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -11,7 +12,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -19,13 +20,6 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -36,7 +30,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username'=>$username]);
+        return static::findOne(['username' => $username]);
     }
 
     /**
@@ -52,7 +46,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->authKey;
+   //     return $this->authKey;
     }
 
     /**
@@ -60,7 +54,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validateAuthKey($authKey)
     {
-        return $this->authKey === $authKey;
+    //    return $this->authKey === $authKey;
     }
 
     /**
@@ -71,6 +65,36 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return \Yii::$app->security->validatePassword($password,$this->password);
+        return \Yii::$app->security->validatePassword($password, $this->password);
+    }
+    public static function isSecretKeyExpire($key){
+        if (!static::isSecretKeyExpire($key))
+        {
+            return null;
+        }
+        return static::findOne([
+            'secret_key' => $key,
+        ]);
+    }
+    public static function findBySecretKey($key)
+    {
+        if (!static::isSecretKeyExpire($key))
+        {
+            return null;
+        }
+        return static::findOne([
+            'secret_key' => $key,
+        ]);
+    }
+
+    /* Хелперы */
+    public function generateSecretKey()
+    {
+        $this->secret_key = Yii::$app->security->generateRandomString().'_'.time();
+    }
+
+    public function removeSecretKey()
+    {
+        $this->secret_key = null;
     }
 }

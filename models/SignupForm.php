@@ -16,6 +16,9 @@ class SignupForm extends Model
     {
         return [
             [['username','password','fio','phone','city','organization'],'required','message'=>'Заполните поле'],
+            ['password', 'match', 'pattern' => '#\d.*\d#s', 'message' => 'Пароль должен содержать минимум 2 буквы и 2 цифры.'],
+            ['password', 'match', 'pattern' => '#[a-z].*[a-z]#is', 'message' => 'Пароль должен содержать минимум 2 буквы и 2 цифры.'],
+            ['username', 'unique', 'targetClass' => User::className(),  'message' => 'Этот логин уже занят'],
         ];
     }
     public function attributeLabels()
