@@ -33,7 +33,7 @@ $this->registerCss($css);
         ],
     ]); ?>
 
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
 
         <?= $form->field($model, 'password')->passwordInput() ?>
 
@@ -48,4 +48,5 @@ $this->registerCss($css);
         </div>
 
     <?php ActiveForm::end(); ?>
+    <?= Html::a('Забыли пароль?', ['/site/send-email']) ?>
 </div>

@@ -7,7 +7,7 @@ use yii\bootstrap4\ActiveForm;
 
 <h1>Регистрация</h1>
 <?php $form = ActiveForm::begin() ?>
-<?= $form->field($model,'username') ?>
+<?= $form->field($model,'email') ?>
 <?= $form->field($model,'password')->passwordInput() ?>
 <?= $form->field($model,'fio') ?>
 <?= $form->field($model,'phone') ?>

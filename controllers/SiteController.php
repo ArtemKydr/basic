@@ -11,6 +11,10 @@ use yii\web\Controller;
 use yii\web\Response;
 use app\models\SignupForm;
 use app\models\User;
+use app\models\SendEmailForm;
+use app\models\ResetPasswordForm;
+use yii\base\InvalidParamException;
+use yii\web\BadRequestHttpException;
 
 class SiteController extends Controller
 {
@@ -128,10 +132,6 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
-    public function actionResetPassword()
-    {
-        return $this->render('resetPassword');
-    }
     public function actionSignUp()
     {
         if (!Yii::$app->user->isGuest) {
@@ -140,7 +140,7 @@ class SiteController extends Controller
         $model = new SignupForm();
         if ($model->load(\Yii::$app->request->post()) and $model->validate()) {
             $user = new User();
-            $user->username = $model->username;
+            $user->email = $model->email;
             $user->password = Yii::$app->security->generatePasswordHash($model->password);
             $user->fio = $model->fio;
             $user->phone = $model->phone;
@@ -152,6 +152,57 @@ class SiteController extends Controller
             }
         }
         return $this->render('signup',compact('model'));
+    }
+    public function actionSendEmail()
+    {
+        $model = new SendEmailForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                if($model->sendEmail()):
+                    Yii::$app->getSession()->setFlash('warning', 'Проверьте емайл.');
+                    return $this->goHome();
+                else:
+                    Yii::$app->getSession()->setFlash('error', 'Нельзя сбросить пароль.');
+                endif;
+            }
+        }
+
+        return $this->render('sendEmail', [
+            'model' => $model,
+        ]);
+    }
+    public function actionResetPassword($key)
+    {
+        try {
+            $model = new ResetPasswordForm($key);
+        }
+        catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate() && $model->resetPassword()) {
+                Yii::$app->getSession()->setFlash('warning', 'Пароль изменен.');
+                return $this->redirect(['/main/login']);
+            }
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
+    public function actionStudent()
+    {
+        return $this->render('student');
+    }
+    public function actionManager()
+    {
+        return $this->render('manager');
+    }
+    public function actionStudentDocument()
+    {
+        return $this->render('student-document');
     }
 
 }

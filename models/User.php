@@ -23,14 +23,14 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by username
+     * Finds user by email
      *
-     * @param string $username
+     * @param string $email
      * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByEmail(string $email)
     {
-        return static::findOne(['username' => $username]);
+        return static::findOne(['email' => $email]);
     }
 
     /**
@@ -67,15 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return \Yii::$app->security->validatePassword($password, $this->password);
     }
-    public static function isSecretKeyExpire($key){
-        if (!static::isSecretKeyExpire($key))
-        {
-            return null;
-        }
-        return static::findOne([
-            'secret_key' => $key,
-        ]);
-    }
+
     public static function findBySecretKey($key)
     {
         if (!static::isSecretKeyExpire($key))
@@ -86,15 +78,21 @@ class User extends ActiveRecord implements IdentityInterface
             'secret_key' => $key,
         ]);
     }
-
-    /* Хелперы */
     public function generateSecretKey()
     {
         $this->secret_key = Yii::$app->security->generateRandomString().'_'.time();
     }
-
     public function removeSecretKey()
     {
         $this->secret_key = null;
+    }
+    public static function isSecretKeyExpire($key){
+        if (empty($key)){
+            return false;
+        }
+        $expire = Yii::$app->params['secretKeyExpire'];
+        $parts = explode('_',$key);
+        $timestamp = (int) end($parts);
+        return $timestamp + $expire >=time();
     }
 }

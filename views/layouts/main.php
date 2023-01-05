@@ -12,6 +12,23 @@ use yii\bootstrap4\NavBar;
 use app\models\LoginForm;
 
 AppAsset::register($this);
+$role = Yii::$app->user->identity->role;
+
+$css =<<<CSS
+@media only screen and (min-width : 1200px) {
+ .container, .container-sm, .container-md, .container-lg, .container-xl {max-width: 1220px} 
+}
+.fixed-top {
+position: relative;
+}
+.navbar.navbar-expand-md.navbar-dark.bg-dark.fixed-top.navbar {
+display: block;
+width: 100%;
+}
+
+CSS;
+$this->registerCss($css);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -36,16 +53,31 @@ AppAsset::register($this);
         ],
     ]);
     if (!Yii::$app->user->isGuest){
-        echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'О науке', 'url' => ['/site/index']],
-            ['label' => 'Инфраструктура', 'url' => ['/site/about']],
-            ['label' => 'Руководителю', 'url' => ['/site/contact']],
-            ['label' => 'Выход (' . Yii::$app->user->identity->username . ')',
-                'url' => ['/site/logout'],
-                'linkOptions' => ['data-method' => 'get']],
-            ]]);
+        if ($role == 'user') {
+            echo Nav::widget([
+                'options' => ['class' => 'navbar-nav'],
+                'items' => [
+                    ['label' => 'О науке', 'url' => ['/site/index']],
+                    ['label' => 'Инфраструктура', 'url' => ['/site/about']],
+                    ['label' => 'Руководителю', 'url' => ['/site/contact']],
+                    ['label' => 'Подать документы', 'url' => ['/site/student']],
+                    ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
+                        'url' => ['/site/logout'],
+                        'linkOptions' => ['data-method' => 'get']],
+                ]]);
+        } else if ($role == 'manager'){
+            echo Nav::widget([
+                'options' => ['class' => 'navbar-nav'],
+                'items' => [
+                    ['label' => 'О науке', 'url' => ['/site/index']],
+                    ['label' => 'Инфраструктура', 'url' => ['/site/about']],
+                    ['label' => 'Руководителю', 'url' => ['/site/contact']],
+                    ['label' => 'Подать документы', 'url' => ['/site/manager']],
+                    ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
+                        'url' => ['/site/logout'],
+                        'linkOptions' => ['data-method' => 'get']],
+                ]]);
+        }
     }else {
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
