@@ -53,7 +53,20 @@ $this->registerCss($css);
         ],
     ]);
     if (!Yii::$app->user->isGuest){
-        if ($role == 'user' or $role == 'admin') {
+    if ($role == 'admin') {
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav'],
+            'items' => [
+                ['label' => 'О науке', 'url' => ['/site/index']],
+                ['label' => 'Инфраструктура', 'url' => ['/site/about']],
+                ['label' => 'Руководителю', 'url' => ['/site/contact']],
+                ['label' => 'Подать документы', 'url' => ['/site/student']],
+                ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
+                ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
+                    'url' => ['/site/logout'],
+                    'linkOptions' => ['data-method' => 'get']],
+            ]]);
+    }elseif ($role == 'user'){
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
@@ -72,7 +85,7 @@ $this->registerCss($css);
                     ['label' => 'О науке', 'url' => ['/site/index']],
                     ['label' => 'Инфраструктура', 'url' => ['/site/about']],
                     ['label' => 'Руководителю', 'url' => ['/site/contact']],
-                    ['label' => 'Подать документы', 'url' => ['/site/manager']],
+                    ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                         'url' => ['/site/logout'],
                         'linkOptions' => ['data-method' => 'get']],

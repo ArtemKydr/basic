@@ -87,6 +87,11 @@ $gridColumns = $grid_columns = [
         'format' => 'text',
         'label' => 'Статус',
     ],
+    [
+        'attribute' => 'comment',
+        'format' => 'text',
+        'label' => 'Комментарий организатора',
+    ],
 
 ]
 ?>
