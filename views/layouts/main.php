@@ -53,7 +53,7 @@ $this->registerCss($css);
         ],
     ]);
     if (!Yii::$app->user->isGuest){
-        if ($role == 'user') {
+        if ($role == 'user' or $role == 'admin') {
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [

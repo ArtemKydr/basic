@@ -11,10 +11,19 @@ class m230105_130503_students_documents extends Migration
     {
         $this->createTable('documents', [
             'id' => $this->primaryKey(),
+            'fio'=>$this->string(),
+            'title' => $this->string(),
             'authors' => $this->string(),
             'nr' => $this->string(),
             'university' => $this->string(),
-            'sourcebook' => $this->string(),
+            'collection' => $this->string(),
+            'source' => $this->string(),
+            'datetime' => $this->string(),
+            'originality' => $this->integer(),
+            'organization' => $this->string(),
+            'email' => $this->string(),
+            'phone'=>$this->string(),
+            'city' => $this->string(),
             'document_status' => 'ENUM("Send for revision",
 "Reject",
 "Send to Print",
@@ -26,6 +35,8 @@ class m230105_130503_students_documents extends Migration
 "The article was accepted",
 "In processing",
 "Last change")',
+            'comment'=>$this->string(),
+            'draft_status'=> 'ENUM("draft","clear")',
         ]);
         $sql_document_status = "ALTER TABLE documents ALTER document_status SET DEFAULT 'In processing'";
         $this->execute($sql_document_status);

@@ -2,8 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Documents;
+use app\models\image\form\UploadForm;
+use app\models\image\image;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Html;
 use app\models\ContactForm;
 use app\models\LoginForm;
+use app\models\UploadDocumentForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -15,6 +21,7 @@ use app\models\SendEmailForm;
 use app\models\ResetPasswordForm;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -65,7 +72,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($date='')
+    public function actionIndex($date = '')
     {
 
         return $this->render('index');
@@ -132,6 +139,7 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
     public function actionSignUp()
     {
         if (!Yii::$app->user->isGuest) {
@@ -146,20 +154,21 @@ class SiteController extends Controller
             $user->phone = $model->phone;
             $user->city = $model->city;
             $user->organization = $model->organization;
-            if ($user->save()){
+            if ($user->save()) {
                 Yii::$app->user->login($user);
-                return $this->render('index');
+                return $this->refresh();
             }
         }
-        return $this->render('signup',compact('model'));
+        return $this->render('signup', compact('model'));
     }
+
     public function actionSendEmail()
     {
         $model = new SendEmailForm();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                if($model->sendEmail()):
+                if ($model->sendEmail()):
                     Yii::$app->getSession()->setFlash('warning', 'Проверьте емайл.');
                     return $this->goHome();
                 else:
@@ -172,12 +181,12 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
     public function actionResetPassword($key)
     {
         try {
             $model = new ResetPasswordForm($key);
-        }
-        catch (InvalidParamException $e) {
+        } catch (InvalidParamException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -192,17 +201,55 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
     public function actionStudent()
     {
         return $this->render('student');
     }
+
     public function actionManager()
     {
         return $this->render('manager');
     }
+
     public function actionStudentDocument()
     {
-        return $this->render('student-document');
-    }
+        $form = Yii::$app->request->post('UploadDocumentForm');
+        $model = new UploadDocumentForm();
+        if (Yii::$app->request->post('UploadDocumentForm')) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            $result = $model->upload();
+            if ($result==true){
+                $form = Yii::$app->request->post('UploadDocumentForm');
+                $document = new Documents();
+                $filename = $model->file->baseName.'.'.$model->file->extension;
+                $document->title = $form['title'];
+                $document->fio = $form['fio'];
+                $document->nr = $form['nr'];
+                $document->organization = $form['organization'];
+                $document->authors = $form['authors'];
+                $document->email = $form['email'];
+                $document->phone = $form['phone'];
+                $document->city = $form['city'];
+                $document->university = $form['university'];
+                $document->datetime = date('d-m-Y H-i-s');
+                $document->source = 'UploadDocument/' . $filename;
+                $document->save();
+                Yii::$app->session->setFlash('success', 'Статья успешно загружена');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');
+                }
+            }
+        $user_id = Yii::$app->user->id;
+        $email = User::find()->select('email')->where(['id'=>$user_id])->column();
+        $query = Documents::find()->where(['email'=>$email]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
 
+            return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider]);
+    }
 }

@@ -22,8 +22,7 @@ class UploadForm extends Model
         if ($this->validate()) {
             foreach ($this->images as $image){
                 $name = strtolower($image->baseName);
-                $name = transliterate($name);
-                $image->saveAs('UploadImages/' . $name . '.' . $image->extension);
+                $image->saveAs('UploadDocument/' . $name . '.' . $image->extension);
             }
             return true;
         } else {

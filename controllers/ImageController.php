@@ -35,7 +35,7 @@ class ImageController extends Controller
                     $images = new image();
                     $images->name = $name;
                     $images->created_at = date('d-m-Y H-i-s');
-                    $images->source = 'UploadImages/' . $name . '.' . $image->extension;
+                    $images->source = 'UploadDocument/' . $name . '.' . $image->extension;
                     $images->save();
                 }
                 Yii::$app->session->setFlash('success', 'Успешно');
