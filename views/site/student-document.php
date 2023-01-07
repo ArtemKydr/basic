@@ -34,27 +34,9 @@ margin-right: 60px;
 width: 50%;
 margin-right: 60px;
 }
-.btn.btn-primary::after{
-    content: attr(data-tooltip); /* Главная часть кода, определяющая содержимое всплывающей подсказки */
-	margin-top: -24px;
-	opacity: 0; /* Наш элемент прозрачен... */
-	padding: 3px 7px;
-	position: absolute;
-	visibility: hidden; /* ...и скрыт. */
-	transition: all 0.4s ease-in-out; /* Добавить плавности по вкусу */
-}
-.btn.btn-primary::after:hover{
-    opacity: 1; /* Показываем его */
-	visibility: visible;
-}
 .help-block{
     color:red;
     margin-left: 5px;
-}
-.btn.btn-primary.draft {
-border: none;
-background: gray;
-margin-left: 20px;
 }
 CSS;
 $this->registerCss($css);
@@ -86,6 +68,22 @@ $gridColumns = $grid_columns = [
         'attribute' => 'document_status',
         'format' => 'text',
         'label' => 'Статус',
+        'value' => function ($data) {
+            $rusDocumentStatus = ['Send for revision'=>"Отправить на доработку",
+                'Reject'=>"Отклонить",
+                'Send to Print'=>"Отправить в печать",
+                'In the draft'=>"В черновике",
+                'The article did not pass the originality test'=>"Статья не прошла проверку на оригинальность",
+                'The article was checked for originality'=>"Статья проверена на оригинальность",
+                'On proofreading'=>"На вычитке",
+                'For revision'=>"На доработку",
+                'The article was accepted'=>"Статья принята",
+                'In processing'=>"В обработке",
+                'Last change'=>"Последнее изменение"];
+            $documentStatus = $rusDocumentStatus[$data->document_status];
+
+            return $documentStatus ;
+        },
     ],
     [
         'attribute' => 'comment',
@@ -115,9 +113,8 @@ $gridColumns = $grid_columns = [
         </div>
     </div>
 
-    <div class="col-lg-offset-1 col-lg-11" data-tooltip="I'm small tooltip. Don't kill me!" style="padding: 0">
+    <div class="col-lg-offset-1 col-lg-11" style="padding: 0">
         <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
-        <?= Html::submitButton('В черновик', ['class' => 'btn btn-primary draft']) ?>
     </div>
 
     <?php ActiveForm::end() ?>

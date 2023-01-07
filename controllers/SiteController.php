@@ -209,7 +209,38 @@ class SiteController extends Controller
 
     public function actionManager()
     {
-        return $this->render('manager');
+        $query = Documents::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+        return $this->render('manager',['dataProvider'=>$dataProvider]);
+    }
+    public function actionView($id)
+    {
+        $model = Documents::findOne($id);
+        return $this->render('view',['model'=>$model]);
+    }
+    public function actionUpdate($id)
+    {
+        $model = Documents::findOne($id);
+        $form = Yii::$app->request->post();
+        if ($model->load(Yii::$app->request->post())){
+            if ((int)$form['Documents']['originality']<70){
+                $model->document_status = 'Reject';
+            }
+            if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'Reject'){
+                Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
+                return $this->redirect(['update','id'=>$id]);
+                die();
+            }
+            $model->save();
+            Yii::$app->session->setFlash('success', 'Успешно');
+            return $this->redirect(['manager','id'=>$id]);
+        }
+        return $this->render('update',['model'=>$model]);
     }
 
     public function actionStudentDocument()
@@ -232,9 +263,9 @@ class SiteController extends Controller
                 $document->phone = $form['phone'];
                 $document->city = $form['city'];
                 $document->university = $form['university'];
-                $document->datetime = date('d-m-Y H-i-s');
+                $document->datetime = date('d.m.Y H:i:s');
                 $document->source = 'UploadDocument/' . $filename;
-                $document->save();
+                $document->save(false);
                 Yii::$app->session->setFlash('success', 'Статья успешно загружена');
                 } else {
                     Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');

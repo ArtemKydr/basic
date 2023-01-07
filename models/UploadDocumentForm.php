@@ -26,7 +26,7 @@ class UploadDocumentForm extends Model
     public function rules()
     {
         return [
-            [['title','fio','organization','city','email','phone'],'required','message'=>'*']
+            [['title','fio','organization','city','email','phone','file'],'required','message'=>'*']
         ];
     }
 
