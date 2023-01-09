@@ -38,14 +38,22 @@ margin-right: 60px;
     color:red;
     margin-left: 5px;
 }
+.btn.btn-primary.draft {
+background: grey;
+margin-left: 20px;
+border: none;
+}
 CSS;
 $this->registerCss($css);
 
 $gridColumns = $grid_columns = [
     [
         'attribute' => 'title',
-        'format' => 'text',
+        'format' => 'raw',
+        'value'=>function ($data) {
+            return Html::a(Html::encode("$data->title"),"http://basic/web/$data->source");},
         'label' => 'Название',
+
     ],
     [
         'attribute' => 'authors',
@@ -68,6 +76,7 @@ $gridColumns = $grid_columns = [
         'attribute' => 'document_status',
         'format' => 'text',
         'label' => 'Статус',
+        'headerOptions' => ['style' => 'width:16%'],
         'value' => function ($data) {
             $rusDocumentStatus = ['Send for revision'=>"Отправить на доработку",
                 'Reject'=>"Отклонить",
@@ -79,7 +88,9 @@ $gridColumns = $grid_columns = [
                 'For revision'=>"На доработку",
                 'The article was accepted'=>"Статья принята",
                 'In processing'=>"В обработке",
-                'Last change'=>"Последнее изменение"];
+                'Last change'=>"Последнее изменение",
+                'The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.'=>'Статья отправлена на Антиплагиат.
+Проверка займет до 3 дней.'];
             $documentStatus = $rusDocumentStatus[$data->document_status];
 
             return $documentStatus ;
@@ -115,7 +126,14 @@ $gridColumns = $grid_columns = [
     </div>
 
     <div class="col-lg-offset-1 col-lg-11" style="padding: 0">
-        <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton('Отправить', [
+                'data' => ['confirm' => 'Данный файл будет опубликован при оформлении полного комплекта документов. Прикладывайте пожалуйста итоговую версию статьи. У вас есть только 2 попытки для отправки материалов.'],
+                'class' => 'btn btn-primary',
+                'name'=>"action",
+                'value'=>"clear"]) ?>
+        <?= Html::submitButton('В черновик', [
+                'class' => 'btn btn-primary draft',
+                'name'=>"action", 'value'=>"draft" ]) ?>
     </div>
 
     <?php ActiveForm::end() ?>

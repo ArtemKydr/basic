@@ -41,7 +41,7 @@ class UploadDocumentForm extends Model
     public function attributeLabels()
     {
         return [
-            'email' => 'Электронная почта для связи',
+            'email' => 'Доп. электронная почта',
             'fio'=>'ФИО',
             'phone'=>'Телефон',
             'city'=>'Город',
@@ -51,7 +51,8 @@ class UploadDocumentForm extends Model
             'authors'=>'Автор',
             'university'=>'ВУЗ',
             'file'=>'Статья',
-            'coauthor'=>'Соавтор'
+            'coauthor'=>'Соавтор',
+            'draft'=>'Черновик'
 
         ];
     }

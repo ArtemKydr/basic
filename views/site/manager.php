@@ -17,7 +17,14 @@ $gridColumns = [
     ],
     ['class'=>'yii\grid\ActionColumn',
         'headerOptions' => ['style' => 'width:4%'],
-        'template' => '{view} {update}',],
+        'template' => '{update} {view}',
+        'buttons'=>
+            [
+                'update' => function ($url, $query, $key) {
+                    return $query->draft_status =='draft' ? '': Html::a('<svg aria-hidden="true" style="display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em;width:1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M498 142l-46 46c-5 5-13 5-17 0L324 77c-5-5-5-12 0-17l46-46c19-19 49-19 68 0l60 60c19 19 19 49 0 68zm-214-42L22 362 0 484c-3 16 12 30 28 28l122-22 262-262c5-5 5-13 0-17L301 100c-4-5-12-5-17 0zM124 340c-5-6-5-14 0-20l154-154c6-5 14-5 20 0s5 14 0 20L144 340c-6 5-14 5-20 0zm-36 84h48v36l-64 12-32-31 12-65h36v48z"/></svg>', $url);
+                }
+            ],
+    ],
     [
         'attribute' => 'nr',
         'format' => 'text',
@@ -38,7 +45,11 @@ $gridColumns = [
                 'For revision'=>"На доработку",
                 'The article was accepted'=>"Статья принята",
                 'In processing'=>"В обработке",
-                'Last change'=>"Последнее изменение"];
+                'Last change'=>"Последнее изменение",
+                'The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.'=>'Статья отправлена на Антиплагиат.
+Проверка займет до 3 дней.',
+                "The document is accepted"=>'Статья прошла проверку на оригинальность',
+                "The document was not accepted"=>'Статья не прошла проверку на оригинальность',];
         $documentStatus = $rusDocumentStatus[$data->document_status];
 
         return $documentStatus ;
@@ -46,7 +57,7 @@ $gridColumns = [
     ],
     [
         'attribute' => 'originality',
-        'format' => 'text',
+        'format' => 'raw',
         'label' => 'Оригинальность %',
     ],
     [
@@ -76,7 +87,10 @@ $gridColumns = [
 ]
 ?>
 <div class ='site-index'>
-    <h2>Поданные заявки</h2>
+    <div class="top" style="display: flex; justify-content: space-between">
+        <h2>Поданные заявки</h2>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
+    </div>
     <div style="margin-top: 50px;">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
