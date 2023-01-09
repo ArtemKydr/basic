@@ -53,6 +53,7 @@ $this->registerCss($css);
         ],
     ]);
     if (!Yii::$app->user->isGuest){
+
     if ($role == 'admin') {
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
@@ -79,6 +80,7 @@ $this->registerCss($css);
                         'linkOptions' => ['data-method' => 'get']],
                 ]]);
         } else if ($role == 'manager'){
+
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
@@ -95,6 +97,9 @@ $this->registerCss($css);
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
             'items' => [
+                ['label' => 'О науке', 'url' => ['/site/index']],
+                ['label' => 'Инфраструктура', 'url' => ['/site/about']],
+                ['label' => 'Руководителю', 'url' => ['/site/contact']],
                 ['label' => 'Регистрация', 'url' => ['/site/sign-up']],
                 ['label' => 'Вход', 'url' => ['/site/login']],
                 ]]);

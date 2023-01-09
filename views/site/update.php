@@ -20,7 +20,6 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'document_status')->dropDownList(['Send for revision'=>"Отправить на доработку",
     'Reject'=>"Отклонить",
     'Send to Print'=>"Отправить в печать",
-    'In the draft'=>"В черновике",
     'The article did not pass the originality test'=>"Статья не прошла проверку на оригинальность",
     'The article was checked for originality'=>"Статья проверена на оригинальность",
     'On proofreading'=>"На вычитке",

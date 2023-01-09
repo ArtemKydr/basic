@@ -1,12 +1,19 @@
 <?php
 
+use yii\helpers\Html;
 use yii\widgets\DetailView;
+
 
 $gridColumns = [
     [
         'attribute' => 'authors',
         'format' => 'text',
-        'label' => 'Авторы',
+        'label' => 'Автор',
+    ],
+    [
+        'attribute' => 'coauthor',
+        'format' => 'text',
+        'label' => 'Соавтор',
     ],
     [
         'attribute' => 'title',
@@ -42,12 +49,21 @@ $gridColumns = [
     ],
     [
         'attribute' => 'source',
-        'format' => 'text',
+        'format' => 'raw',
         'label' => 'Скачать статью',
+        'value'=>function ($data) {
+            return Html::a(Html::encode("$data->title"),"http://basic/web/$data->source");}
+
     ],
 
 
-]
+];
+$css =<<<CSS
+th {
+width: 25%;
+}
+CSS;
+$this->registerCss($css);
 ?>
 <h2 style="margin-bottom: 20px">Карточка студента</h2>
 <?php
@@ -56,4 +72,3 @@ echo DetailView::widget([
     'attributes' => $gridColumns
 ]);
 ?>
-<a href="$gridColumns[attribute]">Скачать</a>

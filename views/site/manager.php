@@ -13,7 +13,7 @@ $gridColumns = [
         'attribute' => 'fio',
         'format' => 'raw',
         'label' => 'ФИО',
-        'headerOptions' => ['style' => 'width:10%'],
+        'headerOptions' => ['style' => 'width:12%'],
     ],
     ['class'=>'yii\grid\ActionColumn',
         'headerOptions' => ['style' => 'width:4%'],

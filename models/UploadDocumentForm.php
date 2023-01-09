@@ -22,6 +22,8 @@ class UploadDocumentForm extends Model
     public $city;
     public $email;
     public $phone;
+    public $coauthor;
+
 
     public function rules()
     {
@@ -39,7 +41,7 @@ class UploadDocumentForm extends Model
     public function attributeLabels()
     {
         return [
-            'email' => 'Электронная почта',
+            'email' => 'Электронная почта для связи',
             'fio'=>'ФИО',
             'phone'=>'Телефон',
             'city'=>'Город',
@@ -48,7 +50,8 @@ class UploadDocumentForm extends Model
             'title'=>'Название статьи',
             'authors'=>'Автор',
             'university'=>'ВУЗ',
-            'file'=>'Статья'
+            'file'=>'Статья',
+            'coauthor'=>'Соавтор'
 
         ];
     }

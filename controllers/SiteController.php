@@ -204,11 +204,21 @@ class SiteController extends Controller
 
     public function actionStudent()
     {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'manager'){
+            return $this->redirect(['access-error']);
+        }
         return $this->render('student');
     }
 
     public function actionManager()
     {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'user'){
+            return $this->redirect(['access-error']);
+        }
         $query = Documents::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -218,13 +228,69 @@ class SiteController extends Controller
         ]);
         return $this->render('manager',['dataProvider'=>$dataProvider]);
     }
+    public function actionStudentDocument()
+    {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'manager'){
+            return $this->redirect(['access-error']);
+        }
+        $email = User::find()->select('email')->where(['id'=>$user_id])->column();
+        $form = Yii::$app->request->post('UploadDocumentForm');
+        $model = new UploadDocumentForm();
+        if (Yii::$app->request->post('UploadDocumentForm')) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            $result = $model->upload();
+            if ($result==true){
+                $form = Yii::$app->request->post('UploadDocumentForm');
+                $document = new Documents();
+                $filename = $model->file->baseName.'.'.$model->file->extension;
+                $document->title = $form['title'];
+                $document->fio = $form['fio'];
+                $document->nr = $form['nr'];
+                $document->coauthor = $form['coauthor'];
+                $document->organization = $form['organization'];
+                $document->authors = $form['authors'];
+                $document->email = $email[0];
+                $document->phone = $form['phone'];
+                $document->city = $form['city'];
+                $document->university = $form['university'];
+                $document->datetime = date('d.m.Y H:i:s');
+                $document->source = 'UploadDocument/' . $filename;
+                $document->save(false);
+                Yii::$app->session->setFlash('success', 'Статья успешно загружена');
+            } else {
+                Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');
+            }
+        }
+
+        $query = Documents::find()->where(['email'=>$email]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
+        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider]);
+    }
     public function actionView($id)
     {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'user'){
+            return $this->redirect(['access-error']);
+        }
         $model = Documents::findOne($id);
         return $this->render('view',['model'=>$model]);
     }
     public function actionUpdate($id)
     {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'user'){
+            return $this->redirect(['access-error']);
+        }
         $model = Documents::findOne($id);
         $form = Yii::$app->request->post();
         if ($model->load(Yii::$app->request->post())){
@@ -243,44 +309,8 @@ class SiteController extends Controller
         return $this->render('update',['model'=>$model]);
     }
 
-    public function actionStudentDocument()
+    public function actionAccessError()
     {
-        $form = Yii::$app->request->post('UploadDocumentForm');
-        $model = new UploadDocumentForm();
-        if (Yii::$app->request->post('UploadDocumentForm')) {
-            $model->file = UploadedFile::getInstance($model, 'file');
-            $result = $model->upload();
-            if ($result==true){
-                $form = Yii::$app->request->post('UploadDocumentForm');
-                $document = new Documents();
-                $filename = $model->file->baseName.'.'.$model->file->extension;
-                $document->title = $form['title'];
-                $document->fio = $form['fio'];
-                $document->nr = $form['nr'];
-                $document->organization = $form['organization'];
-                $document->authors = $form['authors'];
-                $document->email = $form['email'];
-                $document->phone = $form['phone'];
-                $document->city = $form['city'];
-                $document->university = $form['university'];
-                $document->datetime = date('d.m.Y H:i:s');
-                $document->source = 'UploadDocument/' . $filename;
-                $document->save(false);
-                Yii::$app->session->setFlash('success', 'Статья успешно загружена');
-                } else {
-                    Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');
-                }
-            }
-        $user_id = Yii::$app->user->id;
-        $email = User::find()->select('email')->where(['id'=>$user_id])->column();
-        $query = Documents::find()->where(['email'=>$email]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-        ]);
-
-            return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider]);
+        return $this->render('access-error');
     }
 }

@@ -100,6 +100,7 @@ $gridColumns = $grid_columns = [
         <div class="group-list">
             <?= $form->field($model, 'title')->textInput() ?>
             <?= $form->field($model, 'authors')->textInput() ?>
+            <?= $form->field($model, 'coauthor')->textInput() ?>
             <?= $form->field($model, 'nr')->textInput() ?>
             <?= $form->field($model, 'university')->textInput() ?>
             <?= $form->field($model, 'file')->fileInput() ?>
