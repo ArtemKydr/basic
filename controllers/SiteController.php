@@ -202,16 +202,6 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionStudent()
-    {
-        $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager'){
-            return $this->redirect(['access-error']);
-        }
-        return $this->render('student');
-    }
-
     public function actionManager()
     {
         $user_id = Yii::$app->user->id;
@@ -228,6 +218,17 @@ class SiteController extends Controller
         ]);
         return $this->render('manager',['dataProvider'=>$dataProvider]);
     }
+
+    public function actionStudent()
+    {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'manager'){
+            return $this->redirect(['access-error']);
+        }
+        return $this->render('student');
+    }
+
     public function actionStudentDocument()
     {
         $user_id = Yii::$app->user->id;
