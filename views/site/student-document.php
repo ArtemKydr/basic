@@ -78,19 +78,17 @@ $gridColumns = $grid_columns = [
         'label' => 'Статус',
         'headerOptions' => ['style' => 'width:16%'],
         'value' => function ($data) {
-            $rusDocumentStatus = ['Send for revision'=>"Отправить на доработку",
-                'Reject'=>"Отклонить",
-                'Send to Print'=>"Отправить в печать",
-                'In the draft'=>"В черновике",
-                'The article did not pass the originality test'=>"Статья не прошла проверку на оригинальность",
-                'The article was checked for originality'=>"Статья проверена на оригинальность",
-                'On proofreading'=>"На вычитке",
-                'For revision'=>"На доработку",
-                'The article was accepted'=>"Статья принята",
-                'In processing'=>"В обработке",
-                'Last change'=>"Последнее изменение",
-                'The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.'=>'Статья отправлена на Антиплагиат.
-Проверка займет до 3 дней.'];
+
+            $rusDocumentStatus = ["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
+                "The article has been checked for originality"=>'Статья прошла проверку на оригинальность',
+                "The article does not meet the requirements"=>'Статья не соответствует требованиям',
+                "The article was rejected as an incomplete set of documents"=>'Статья отклонена, так как неполный комплект документов',
+                "The article has been accepted for review"=>'Статья принята к рецензированию',
+                "The article has been accepted for publication"=>'Статья принята к публикации',
+                "In processing"=> 'В процессе',
+                "Article under consideration"=>'Статья на рассмотрении',
+                "In the draft" => 'В черновике'
+            ];
             $documentStatus = $rusDocumentStatus[$data->document_status];
 
             return $documentStatus ;
@@ -110,18 +108,18 @@ $gridColumns = $grid_columns = [
     <div class="form-student-document" style="display: flex">
         <div class="group-list">
             <?= $form->field($model, 'title')->textInput() ?>
-            <?= $form->field($model, 'authors')->textInput() ?>
+            <div class="field-author" style="display: flex; justify-content: start; margin-bottom: 20px">
+                <div class="control-label-author" style="width: 40%">
+                    Автор
+                </div>
+                <div>
+                    <?php echo $username[0]?>
+                </div>
+            </div>
             <?= $form->field($model, 'coauthor')->textInput() ?>
             <?= $form->field($model, 'nr')->textInput() ?>
             <?= $form->field($model, 'university')->textInput() ?>
             <?= $form->field($model, 'file')->fileInput() ?>
-        </div>
-        <div class="group-list">
-            <?= $form->field($model, 'fio')->textInput() ?>
-            <?= $form->field($model, 'organization')->textInput() ?>
-            <?= $form->field($model, 'city')->textInput() ?>
-            <?= $form->field($model, 'email')->textInput() ?>
-            <?= $form->field($model, 'phone')->textInput() ?>
         </div>
     </div>
 

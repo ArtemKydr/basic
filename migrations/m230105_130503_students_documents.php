@@ -11,6 +11,8 @@ class m230105_130503_students_documents extends Migration
     {
         $this->createTable('documents', [
             'id' => $this->primaryKey(),
+            'personal_data'=>$this->boolean(),
+            'user_id'=>$this->integer(),
             'fio'=>$this->string(),
             'title' => $this->string(),
             'authors' => $this->string(),
@@ -25,24 +27,20 @@ class m230105_130503_students_documents extends Migration
             'email' => $this->string(),
             'phone'=>$this->string(),
             'city' => $this->string(),
-            'document_status' => 'ENUM("Send for revision",
-            "The document is accepted",
-            "The document was not accepted",
-            "The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.",
-"Reject",
-"Send to Print",
-"In the draft",
-"The article did not pass the originality test",
-"The article was checked for originality",
-"On proofreading",
-"For revision", 
-"The article was accepted",
+            'document_status' => 'ENUM("The article did not pass the originality test",
+ "The article has been checked for originality", 
+"The article does not meet the requirements", 
+"The article was rejected as an incomplete set of documents", 
+"The article has been accepted for review", 
+"The article has been accepted for publication",
 "In processing",
-"Last change")',
+"In the draft",
+"Clear",
+"Article under consideration")',
             'comment'=>$this->string(),
             'draft_status'=> 'ENUM("draft","clear")',
         ]);
-        $sql_document_status = "ALTER TABLE documents ALTER document_status SET DEFAULT 'In processing'";
+        $sql_document_status = "ALTER TABLE documents ALTER document_status SET DEFAULT 'Article under consideration'";
         $this->execute($sql_document_status);
 
     }

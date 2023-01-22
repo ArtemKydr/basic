@@ -5,7 +5,9 @@ namespace app\controllers;
 use app\models\Documents;
 use app\models\image\form\UploadForm;
 use app\models\image\image;
+use app\models\ManagerLogs;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\helpers\Html;
 use app\models\ContactForm;
 use app\models\LoginForm;
@@ -139,6 +141,24 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+    public function actionPersonalInformation()
+    {
+        $user_id = Yii::$app->user->id;
+        $query = User::find()->where(['id'=>$user_id]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
+        return $this->render('personal-information',['dataProvider'=>$dataProvider]);
+    }
+    public function actionRequirements()
+    {
+        return $this->render('requirements');
+    }
+
 
     public function actionSignUp()
     {
@@ -219,7 +239,8 @@ class SiteController extends Controller
         if ($role === 'manager'){
             return $this->redirect(['access-error']);
         }
-        $email = User::find()->select('email')->where(['id'=>$user_id])->column();
+        $user = User::find()->where(['id'=>$user_id])->one();
+        $username = User::find()->select('fio')->where(['id'=>$user_id])->column();
         $form = Yii::$app->request->post('UploadDocumentForm');
         $draft_status = Yii::$app->request->post()['action'];
         $model = new UploadDocumentForm();
@@ -230,31 +251,38 @@ class SiteController extends Controller
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
                 $filename = $model->file->baseName.'.'.$model->file->extension;
+                $document->user_id = $user_id;
                 $document->title = $form['title'];
-                $document->fio = $form['fio'];
+                $document->fio = $user['fio'];
                 $document->nr = $form['nr'];
                 $document->coauthor = $form['coauthor'];
-                $document->organization = $form['organization'];
-                $document->authors = $form['authors'];
-                $document->email = $email[0];
-                $document->phone = $form['phone'];
+                $document->organization = $user['organization'];
+                $document->authors = $user['fio'];
+                $document->email = $user['email'];
+                $document->phone = $user['phone'];
                 $document->draft_status = $draft_status;
                 if ($draft_status == 'draft'){
                     $document->document_status = 'In the draft';
                 } else {
-                    $document->document_status = 'The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.';
+                    $document->document_status = 'Article under consideration';
                 }
-                $document->city = $form['city'];
+                $document->city = $user['city'];
                 $document->university = $form['university'];
                 $document->datetime = date('d.m.Y H:i:s');
                 $document->source = 'UploadDocument/' . $filename;
                 $document->save(false);
-                Yii::$app->session->setFlash('success', 'Статья успешно загружена');
+                if ($draft_status == 'draft'){
+                    Yii::$app->session->setFlash('success', 'Черновик статьи успешно загружен');
+                }
+                else{
+                    Yii::$app->session->setFlash('success', 'Статья отправлена на Антиплагиат. Проверка займет до рабочих 3 дней.');
+                }
             } else {
                 Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');
             }
         }
-        $query = Documents::find()->where(['email'=>$email]);
+
+        $query = Documents::find()->where(['email'=>$user['email']]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -262,7 +290,7 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider]);
+        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username]);
     }
 
     public function actionManager()
@@ -285,12 +313,19 @@ class SiteController extends Controller
     public function actionView($id)
     {
         $user_id = Yii::$app->user->id;
+        $a = Documents::find()->select('user_id')->where(['id'=>$id])->column();
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'user'){
             return $this->redirect(['access-error']);
         }
-        $model = Documents::findOne($id);
-        return $this->render('view',['model'=>$model]);
+        $query = Documents::find()->select('*')->where(['user_id'=>$a]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+        return $this->render('view',['dataProvider'=>$dataProvider]);
     }
     public function actionUpdate($id)
     {
@@ -300,6 +335,10 @@ class SiteController extends Controller
         if ($role === 'user'){
             return $this->redirect(['access-error']);
         }
+        $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
+        $manager = User::find()->where(['id'=>$user_id])->one();
+        $student = User::find()->where(['id'=>$student_id])->one();
+        $manager_model = new ManagerLogs();
         $model = Documents::findOne($id);
         if ($model->draft_status == 'draft'){
             return $this->redirect(['access-error']);
@@ -307,18 +346,37 @@ class SiteController extends Controller
         $form = Yii::$app->request->post();
         if ($model->load(Yii::$app->request->post())){
             if ((int)$form['Documents']['originality']<70){
-                $model->document_status = 'Reject';
+                $model->document_status = 'The article did not pass the originality test';
             }
-            if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'Reject'){
+            if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'The article did not pass the originality test'){
                 Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                 return $this->redirect(['update','id'=>$id]);
                 die();
             }
+            $model->comment = $form['Documents']['comment'];
+            $manager_model->manager_id = $manager['id'];
+            $manager_model->user_id = $student['id'];
+            $manager_model->manager_fio = $manager['fio'];
+            $manager_model->user_fio = $student['fio'];
+            $manager_model->document_status_change = $model->document_status;
+            $manager_model->comment = $model->comment;
+            $manager_model->datetime = date('d.m.Y H:i:s');
+            $manager_model->save();
             $model->save();
             Yii::$app->session->setFlash('success', 'Успешно');
             return $this->redirect(['manager','id'=>$id]);
         }
-        return $this->render('update',['model'=>$model]);
+        $data = ManagerLogs::find()->where(['user_id'=>$student_id])->all();
+        $provider = new ArrayDataProvider([
+            'allModels' => $data,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => ['id', 'name'],
+            ],
+        ]);
+        return $this->render('update',['model'=>$model,'data'=>$data,'student'=>$student]);
     }
 
     public function actionAccessError()

@@ -58,11 +58,11 @@ $this->registerCss($css);
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
             'items' => [
-                ['label' => 'О науке', 'url' => ['/site/index']],
-                ['label' => 'Инфраструктура', 'url' => ['/site/about']],
-                ['label' => 'Руководителю', 'url' => ['/site/contact']],
-                ['label' => 'Подать документы', 'url' => ['/site/student']],
+                ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
+                ['label' => 'Требования', 'url' => ['/site/requirements']],
+                ['label' => 'Подать документы', 'url' => ['/site/student-document']],
                 ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
+                ['label' => 'Контакты', 'url' => ['/site/contact']],
                 ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'get']],
@@ -71,10 +71,10 @@ $this->registerCss($css);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
-                    ['label' => 'О науке', 'url' => ['/site/index']],
-                    ['label' => 'Инфраструктура', 'url' => ['/site/about']],
-                    ['label' => 'Руководителю', 'url' => ['/site/contact']],
-                    ['label' => 'Подать документы', 'url' => ['/site/student']],
+                    ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
+                    ['label' => 'Требования', 'url' => ['/site/requirements']],
+                    ['label' => 'Подать документы', 'url' => ['/site/student-document']],
+                    ['label' => 'Контакты', 'url' => ['/site/contact']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                         'url' => ['/site/logout'],
                         'linkOptions' => ['data-method' => 'get']],
@@ -84,9 +84,7 @@ $this->registerCss($css);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
-                    ['label' => 'О науке', 'url' => ['/site/index']],
-                    ['label' => 'Инфраструктура', 'url' => ['/site/about']],
-                    ['label' => 'Руководителю', 'url' => ['/site/contact']],
+                    ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
                     ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                         'url' => ['/site/logout'],
@@ -97,9 +95,7 @@ $this->registerCss($css);
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
             'items' => [
-                ['label' => 'О науке', 'url' => ['/site/index']],
-                ['label' => 'Инфраструктура', 'url' => ['/site/about']],
-                ['label' => 'Руководителю', 'url' => ['/site/contact']],
+                ['label' => 'Требования', 'url' => ['/site/requirements']],
                 ['label' => 'Регистрация', 'url' => ['/site/sign-up']],
                 ['label' => 'Вход', 'url' => ['/site/login']],
                 ]]);

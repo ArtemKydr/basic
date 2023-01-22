@@ -1,5 +1,6 @@
 <?php
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -66,9 +67,3 @@ CSS;
 $this->registerCss($css);
 ?>
 <h2 style="margin-bottom: 20px">Карточка студента</h2>
-<?php
-echo DetailView::widget([
-    'model' => $model,
-    'attributes' => $gridColumns
-]);
-?>

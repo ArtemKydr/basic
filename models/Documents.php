@@ -7,7 +7,7 @@ class Documents extends ActiveRecord
     public function rules()
     {
         return [
-            [['comment','originality','document_status'],'required']
+            [['originality','document_status'],'required']
         ];
     }
     public function attributeLabels()

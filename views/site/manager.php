@@ -35,21 +35,16 @@ $gridColumns = [
         'format' => 'text',
         'label' => 'Статус',
         'value' => function ($data) {
-            $rusDocumentStatus = ['Send for revision'=>"Отправить на доработку",
-                'Reject'=>"Отклонить",
-                'Send to Print'=>"Отправить в печать",
-                'In the draft'=>"В черновике",
-                'The article did not pass the originality test'=>"Статья не прошла проверку на оригинальность",
-                'The article was checked for originality'=>"Статья проверена на оригинальность",
-                'On proofreading'=>"На вычитке",
-                'For revision'=>"На доработку",
-                'The article was accepted'=>"Статья принята",
-                'In processing'=>"В обработке",
-                'Last change'=>"Последнее изменение",
-                'The article has been sent for Anti-Plagiarism. The verification will take up to 3 days.'=>'Статья отправлена на Антиплагиат.
-Проверка займет до 3 дней.',
-                "The document is accepted"=>'Статья прошла проверку на оригинальность',
-                "The document was not accepted"=>'Статья не прошла проверку на оригинальность',];
+            $rusDocumentStatus = ["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
+                "The article has been checked for originality"=>'Статья прошла проверку на оригинальность',
+                "The article does not meet the requirements"=>'Статья не соответствует требованиям',
+                "The article was rejected as an incomplete set of documents"=>'Статья отклонена, так как неполный комплект документов',
+                "The article has been accepted for review"=>'Статья принята к рецензированию',
+                "The article has been accepted for publication"=>'Статья принята к публикации',
+                "In processing"=> 'В процессе',
+                "In the draft"=>'В черновике',
+                "Article under consideration"=>'Статья отправлена на Антиплагиат. Проверка займет до 3 дней.',
+                ];
         $documentStatus = $rusDocumentStatus[$data->document_status];
 
         return $documentStatus ;
