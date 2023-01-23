@@ -67,3 +67,8 @@ CSS;
 $this->registerCss($css);
 ?>
 <h2 style="margin-bottom: 20px">Карточка студента</h2>
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'columns' => $gridColumns,
+]) ?>
+

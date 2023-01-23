@@ -23,6 +23,9 @@ class UploadDocumentForm extends Model
     public $email;
     public $phone;
     public $coauthor;
+    public $file_scan;
+    public $review;
+    public $expert;
 
 
     public function rules()
@@ -52,7 +55,10 @@ class UploadDocumentForm extends Model
             'university'=>'ВУЗ',
             'file'=>'Статья',
             'coauthor'=>'Соавтор',
-            'draft'=>'Черновик'
+            'draft'=>'Черновик',
+            'expert'=>'Экспертное заключение',
+            'review'=>'Рецензия',
+            'file_scan'=>'Файл статьи с подписями',
 
         ];
     }

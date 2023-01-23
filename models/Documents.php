@@ -7,9 +7,10 @@ class Documents extends ActiveRecord
     public function rules()
     {
         return [
-            [['originality','document_status'],'required']
+            [['document_status'],'required']
         ];
     }
+
     public function attributeLabels()
     {
         return [
@@ -18,7 +19,7 @@ class Documents extends ActiveRecord
             'phone'=>'Телефон',
             'city'=>'Город',
             'organization'=>'Организация',
-            'nr'=>'Научный руководитель',
+            'nr'=>'Н/Р',
             'title'=>'Название статьи',
             'authors'=>'Автор',
             'university'=>'ВУЗ',
@@ -26,6 +27,9 @@ class Documents extends ActiveRecord
             'originality'=>'Оригинальность',
             'comment'=>'Комментарий',
             'document_status'=>'Статус статьи',
+            'datetime'=>'Дата подачи',
+            'source'=>'Ссылка',
+            'personal_data'=>'П/Д'
 
         ];
     }

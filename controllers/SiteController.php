@@ -251,6 +251,9 @@ class SiteController extends Controller
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
                 $filename = $model->file->baseName.'.'.$model->file->extension;
+                $expert = $model->expert->baseName.'.'.$model->expert->extension;
+                $review = $model->review->baseName.'.'.$model->review->extension;
+                $file_scan = $model->file_scan->baseName.'.'.$model->file_scan->extension;
                 $document->user_id = $user_id;
                 $document->title = $form['title'];
                 $document->fio = $user['fio'];
@@ -270,6 +273,9 @@ class SiteController extends Controller
                 $document->university = $form['university'];
                 $document->datetime = date('d.m.Y H:i:s');
                 $document->source = 'UploadDocument/' . $filename;
+                $document->expert = 'UploadDocumentExpert/' . $expert;
+                $document->review = 'UploadDocumentReview/' . $review;
+                $document->file_scan = 'UploadDocumentFileScan/' . $file_scan;
                 $document->save(false);
                 if ($draft_status == 'draft'){
                     Yii::$app->session->setFlash('success', 'Черновик статьи успешно загружен');
@@ -283,6 +289,7 @@ class SiteController extends Controller
         }
 
         $query = Documents::find()->where(['email'=>$user['email']]);
+        $document_status_forms = Documents::find()->select('document_status')->where(['email'=>$user['email']])->column();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -290,12 +297,109 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username]);
+        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username,'document_status_forms'=>$document_status_forms]);
     }
 
     public function actionManager()
     {
+        $user_id = Yii::$app->user->id;
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'user'){
+            return $this->redirect(['access-error']);
+        }
+        $model = new Documents();
+        $form = Yii::$app->request->post();
+        $form = $form['Documents'];
+        $manager = User::find()->where(['id'=>$user_id])->one();
+        $manager_model = new ManagerLogs();
+        if ($form==null){
+            $flag = 1;
+        }else {
+            for ($i=0;$i<count($form);$i++){
+                $keys = array_keys($form);
+                $manager_model = new ManagerLogs();
+                $document_id = $keys[$i];
+                $model = Documents::findOne($document_id);
+                $student_id = Documents::find()->select('user_id')->where(['id'=>$document_id])->one();
+                $student = User::find()->where(['id'=>$student_id])->one();
+                $model->originality = $form[$document_id]['originality'];
+                if ((int)$form[$document_id]['originality']<70){
+                    $model->document_status = 'The article did not pass the originality test';
+                }else if ((int)$form[$document_id]['originality']>=70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test'){
+                    Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
+                    return $this->redirect(['manager']);
+                    die();
+                } else {
+                    $model->document_status = $form[$document_id]['document_status'];
+                }
+                $model->personal_data = $form[$document_id]['personal_data'];
+                $model->comment = $form[$document_id]['comment'];
+                //////////////////////////////////////////
+                $check = Documents::find()->where(['id'=>$keys[$i]])->one();
+                $personal_data1 = $check['personal_data'];
+                $personal_data2 = $form[$document_id]['personal_data'];
+                $comment1 = $check['comment'];
+                $comment2 = $form[$document_id]['comment'];
+                $document_status1 = $form[$document_id]['document_status'];
+                $document_status2 = $check['document_status'];
+                $model->save(false);
 
+                if ($personal_data1==$personal_data2 and $comment1==$comment2 and $document_status1==$document_status2)
+                {
+                    continue;
+                }else if ($personal_data1!=$personal_data2 and $comment1!=$comment2){
+                    $manager_model->comment = $model->comment;
+                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+                }
+                elseif ($personal_data1==$personal_data2 and $comment1!=$comment2 and $document_status1==$document_status2){
+                        $manager_model->comment = $model->comment;
+                }
+                elseif ($personal_data1!=$personal_data2 and $comment1==$comment2){
+                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+                }
+                ////c
+                elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
+                    $manager_model->document_status_change = $model->document_status;
+                    $manager_model->comment = $model->comment;
+                }
+                elseif ($document_status1==$document_status2 and $comment1!=$comment2){
+                    $manager_model->comment = $model->comment;
+                }
+                elseif ($document_status1!=$document_status2 and $comment1==$comment2){
+                    $manager_model->document_status_change = $model->document_status;
+                }
+                ////b
+                elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
+                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+                    $manager_model->document_status_change = $model->document_status;
+                }
+                elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
+                    $manager_model->document_status_change = $model->document_status;
+                }
+                elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
+                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+                }
+                else if ($personal_data1!=$personal_data2)
+                {
+                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+                }
+                else if ($comment1!=$comment2) {
+
+                    $manager_model->comment = $model->comment;
+                }
+                else if ($document_status1!=$document_status2){
+
+                    $manager_model->document_status_change = $model->document_status;
+                }
+                $manager_model->manager_id = $manager['id'];
+                $manager_model->user_id = $student['id'];
+                $manager_model->manager_fio = $manager['fio'];
+                $manager_model->user_fio = $student['fio'];
+                $manager_model->datetime = date('d.m.Y H:i:s');
+                $manager_model->save();
+            }
+            return $this->redirect(['manager']);
+        }
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'user'){
@@ -308,7 +412,7 @@ class SiteController extends Controller
                 'pageSize' => 25,
             ],
         ]);
-        return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query]);
+        return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query,'model'=>$model]);
     }
     public function actionView($id)
     {
@@ -353,29 +457,74 @@ class SiteController extends Controller
                 return $this->redirect(['update','id'=>$id]);
                 die();
             }
+            $personal_data_status = Documents::find()->select('personal_data')->where(['user_id'=>$student_id])->column();
             $model->comment = $form['Documents']['comment'];
+            $model->originality = $form['Documents']['originality'];
+
+            $check = Documents::find()->where(['id'=>$id])->one();
+            $personal_data1 = $check['personal_data'];
+            $personal_data2 =  $check['personal_data'];
+            $comment1 = $check['comment'];
+            $comment2 =  $form['Documents']['comment'];
+            $document_status1 =  $form['Documents']['document_status'];
+            $document_status2 = $check['document_status'];
+            $model->save();
+            if ($personal_data1==$personal_data2 and $comment1==$comment2 and $document_status1==$document_status2)
+            {
+                Yii::$app->session->setFlash('success', 'Успешно');
+                return $this->redirect(['manager','id'=>$id]);
+            }else if ($personal_data1!=$personal_data2 and $comment1!=$comment2){
+                $manager_model->comment = $model->comment;
+                $manager_model->personal_data_status = $form['Documents']['personal_data'];
+            }
+            elseif ($personal_data1==$personal_data2 and $comment1!=$comment2 and $document_status1==$document_status2){
+                $manager_model->comment = $model->comment;
+            }
+            elseif ($personal_data1!=$personal_data2 and $comment1==$comment2){
+                $manager_model->personal_data_status = $form['Documents']['personal_data'];
+            }
+            ////c
+            elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
+                $manager_model->document_status_change = $model->document_status;
+                $manager_model->comment = $model->comment;
+            }
+            elseif ($document_status1==$document_status2 and $comment1!=$comment2){
+                $manager_model->comment = $model->comment;
+            }
+            elseif ($document_status1!=$document_status2 and $comment1==$comment2){
+                $manager_model->document_status_change = $model->document_status;
+            }
+            ////b
+            elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
+                $manager_model->document_status_change = $model->document_status;
+            }
+            elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
+                $manager_model->document_status_change = $model->document_status;
+            }
+            elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
+            }
+            else if ($personal_data1!=$personal_data2)
+            {
+                $manager_model->personal_data_status = $check['personal_data'];;
+            }
+            else if ($comment1!=$comment2) {
+
+                $manager_model->comment = $model->comment;
+            }
+            else if ($document_status1!=$document_status2){
+
+                $manager_model->document_status_change = $model->document_status;
+            }
             $manager_model->manager_id = $manager['id'];
             $manager_model->user_id = $student['id'];
             $manager_model->manager_fio = $manager['fio'];
             $manager_model->user_fio = $student['fio'];
-            $manager_model->document_status_change = $model->document_status;
-            $manager_model->comment = $model->comment;
             $manager_model->datetime = date('d.m.Y H:i:s');
             $manager_model->save();
-            $model->save();
             Yii::$app->session->setFlash('success', 'Успешно');
             return $this->redirect(['manager','id'=>$id]);
         }
         $data = ManagerLogs::find()->where(['user_id'=>$student_id])->all();
-        $provider = new ArrayDataProvider([
-            'allModels' => $data,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'sort' => [
-                'attributes' => ['id', 'name'],
-            ],
-        ]);
         return $this->render('update',['model'=>$model,'data'=>$data,'student'=>$student]);
     }
 

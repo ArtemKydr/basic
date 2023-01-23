@@ -14,6 +14,7 @@ class m230121_100522_manager_logs extends Migration
     {
         $this->createTable('manager_logs', [
             'id' => $this->primaryKey(),
+            'personal_data_status'=>$this->boolean(),
             'manager_id'=>$this->string(),
             'user_id'=>$this->string(),
             'manager_fio'=>$this->string(),
@@ -22,6 +23,8 @@ class m230121_100522_manager_logs extends Migration
             'comment'=>$this->string(),
             'datetime' => $this->string(),
         ]);
+        $personal_data_status = "ALTER TABLE manager_logs ALTER personal_data_status SET DEFAULT 0";
+        $this->execute($personal_data_status);
     }
 
     /**

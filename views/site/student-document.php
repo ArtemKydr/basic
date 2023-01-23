@@ -9,6 +9,14 @@ use yii\helpers;
 
 $this->title = 'Загрузка документов';
 $this->params['breadcrumbs'][] = $this->title;
+$complect_files = 'hidden';
+$a = $document_status_forms;
+for ($i=0;$i<count($document_status_forms);$i++){
+    if ($document_status_forms[$i]!="The article did not pass the originality test" and $document_status_forms[$i]!="Article under consideration") {
+        $complect_files = 'visible';
+
+    }
+}
 $css =<<<CSS
 .form-group {
 display: flex;
@@ -20,7 +28,7 @@ margin-top: 20px;
 }
 .control-label{
 width: 60%;
-margin-right: 20px;
+margin-right: 0px;
 }
 .col-lg-offset-1.col-lg-11{
 display: flex;
@@ -30,9 +38,17 @@ justify-content: start;
 width: 25%;
 margin-right: 60px;
 }
+.form-group.field-uploaddocumentform-review label{
+width: 40%;
+}
+.form-group.field-uploaddocumentform-expert label{
+width: 40%;
+}
+.form-group.field-uploaddocumentform-file_scan label{
+width: 40%;
+}
 .group-list{
 width: 50%;
-margin-right: 60px;
 }
 .help-block{
     color:red;
@@ -42,6 +58,9 @@ margin-right: 60px;
 background: grey;
 margin-left: 20px;
 border: none;
+}
+.document_status_forms{
+visibility: $complect_files;
 }
 CSS;
 $this->registerCss($css);
@@ -102,24 +121,31 @@ $gridColumns = $grid_columns = [
 
 ]
 ?>
-<div class="site-student-document">
+<div class="site-student-document" >
     <h1><?= Html::encode($this->title) ?></h1>
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
-    <div class="form-student-document" style="display: flex">
-        <div class="group-list">
-            <?= $form->field($model, 'title')->textInput() ?>
-            <div class="field-author" style="display: flex; justify-content: start; margin-bottom: 20px">
-                <div class="control-label-author" style="width: 40%">
-                    Автор
+    <div class="form-student-document" style="display: flex; justify-content: space-between">
+        <div class="group-list" style="display: flex; justify-content: space-between;">
+            <div style="margin-right: 40px">
+                <div class="field-author" style="display: flex; justify-content: start; margin-bottom: 20px">
+                    <div class="control-label-author" style="width: 40%">
+                        Автор
+                    </div>
+                    <div>
+                        <?php echo $username[0]?>
+                    </div>
                 </div>
-                <div>
-                    <?php echo $username[0]?>
-                </div>
+                <?= $form->field($model, 'title')->textInput() ?>
+                <?= $form->field($model, 'coauthor')->textInput() ?>
+                <?= $form->field($model, 'nr')->textInput() ?>
+                <?= $form->field($model, 'university')->textInput() ?>
+                <?= $form->field($model, 'file')->fileInput() ?>
             </div>
-            <?= $form->field($model, 'coauthor')->textInput() ?>
-            <?= $form->field($model, 'nr')->textInput() ?>
-            <?= $form->field($model, 'university')->textInput() ?>
-            <?= $form->field($model, 'file')->fileInput() ?>
+            <div class="document_status_forms">
+                <?= $form->field($model, 'expert')->fileInput() ?>
+                <?= $form->field($model, 'review')->fileInput() ?>
+                <?= $form->field($model, 'file_scan')->fileInput()?>
+            </div>
         </div>
     </div>
 

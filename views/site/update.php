@@ -12,6 +12,7 @@ width: 5%;
 .form-control{
 width: 50%;
 }
+
 CSS;
 $this->registerCss($css);
 
@@ -49,23 +50,40 @@ $form = ActiveForm::begin([
         echo 'Пока изменений нет...';
     }
     for($i=0;$i<count($data);$i++){
+        $personal_data_early = $data[$i-1]['personal_data_status'];
+        $personal_data = $data[$i]['personal_data_status'];
         $document_status_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
+        $document_status_change = $rusDocumentStatus[$data[$i]['document_status_change']];
+
+        $comment_change_early = $data[$i-1]['comment'];
+        $comment_change = $data[$i]['comment'];
+
         $date_change = $data[$i]['datetime'];
         $manager_fio = $data[$i]['manager_fio'];
-        $comment_change = $data[$i]['comment'];
-        $document_status_change = $rusDocumentStatus[$data[$i]['document_status_change']];
-        if(($comment_change!=null or $comment_change!= '') and ($document_status_change!=null or $document_status_change!= '')){
-            if($document_status_change == $document_status_change_early){
-                echo $date_change .': Организатор '.$manager_fio.' добавил комментарий: '.$comment_change.'<br>';
-            }else{
-                echo  $date_change .': Организатор '.$manager_fio.' изменил статус на: '.$document_status_change.' '. 'и добавил комментарий: '.$comment_change.'<br>';
+
+        if($personal_data==1 and $personal_data!= $personal_data_early and $personal_data_early==null){
+            echo $date_change .': Организатор ' . $manager_fio . ' принял документы "Персональные данные"'.'<br>';
+        }
+        else {
+            $flag = 1;
+        }
+        if ($document_status_change != $document_status_change_early and $comment_change!=$comment_change_early) {
+            if($document_status_change==null){
+                echo $date_change .': Организатор ' . $manager_fio . ' оставил комментарий: '.$comment_change.'<br>';
+            }else if($comment_change==null){
+                echo $date_change .': Организатор ' . $manager_fio . ' изменил статус на "'.$document_status_change.'"<br>';
+            } else
+            {
+                echo $date_change .': Организатор ' . $manager_fio . ' изменил статус на "'.$document_status_change.'", а также оставил комментарий: '.$comment_change.'<br>';
             }
 
-        }else if($comment_change!=null or $comment_change!= ''){
-            echo $date_change .': Организатор '.$manager_fio.' добавил комментарий: '.$comment_change.'<br>';
-        }else if($document_status_change!=null or $document_status_change!= '') {
-            echo $date_change .': Организатор ' . $manager_fio . ' изменил статус на: ' . $document_status_change . '<br>';
         }
+        else if($document_status_change == $document_status_change_early and $comment_change!=$comment_change_early){
+            echo $date_change .': Организатор ' . $manager_fio . ' оставил комментарий: '.$comment_change.'<br>';
+        }else if ($document_status_change != $document_status_change_early and $comment_change==$comment_change_early) {
+            echo $date_change .': Организатор ' . $manager_fio . ' изменил статус на "'.$document_status_change.'"<br>';
+        }
+
     }
 
     ?>
