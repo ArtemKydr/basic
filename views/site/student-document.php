@@ -9,14 +9,6 @@ use yii\helpers;
 
 $this->title = 'Загрузка документов';
 $this->params['breadcrumbs'][] = $this->title;
-$complect_files = 'hidden';
-$a = $document_status_forms;
-for ($i=0;$i<count($document_status_forms);$i++){
-    if ($document_status_forms[$i]!="The article did not pass the originality test" and $document_status_forms[$i]!="Article under consideration") {
-        $complect_files = 'visible';
-
-    }
-}
 $css =<<<CSS
 .form-group {
 display: flex;
@@ -60,7 +52,7 @@ margin-left: 20px;
 border: none;
 }
 .document_status_forms{
-visibility: $complect_files;
+visibility: visible;
 }
 CSS;
 $this->registerCss($css);
@@ -141,11 +133,10 @@ $gridColumns = $grid_columns = [
                 <?= $form->field($model, 'university')->textInput() ?>
                 <?= $form->field($model, 'file')->fileInput() ?>
             </div>
-            <div class="document_status_forms">
-                <?= $form->field($model, 'expert')->fileInput() ?>
-                <?= $form->field($model, 'review')->fileInput() ?>
-                <?= $form->field($model, 'file_scan')->fileInput()?>
+            <div>
+
             </div>
+
         </div>
     </div>
 
@@ -158,6 +149,9 @@ $gridColumns = $grid_columns = [
         <?= Html::submitButton('В черновик', [
                 'class' => 'btn btn-primary draft',
                 'name'=>"action", 'value'=>"draft" ]) ?>
+        <div style="margin-left: 20px">
+            <a href="/web/site/additional-student-document">Загрузить дополнительные документы</a>
+        </div>
     </div>
 
     <?php ActiveForm::end() ?>

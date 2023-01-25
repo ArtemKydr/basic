@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
 ]) ?>
 <h2 style="margin-bottom: 20px">Карточка студента: <?php echo $student['fio'] ?></h2>
 <?= $form->field($model, 'originality') ?>
-<?= $form->field($model, 'comment')?>
+<?= $form->field($model, 'comment')->textarea()?>
 <?= $form->field($model, 'document_status')->dropDownList(["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
     "The article has been checked for originality"=>'Статья прошла проверку на оригинальность',
     "The article does not meet the requirements"=>'Статья не соответствует требованиям',

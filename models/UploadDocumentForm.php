@@ -23,9 +23,6 @@ class UploadDocumentForm extends Model
     public $email;
     public $phone;
     public $coauthor;
-    public $file_scan;
-    public $review;
-    public $expert;
 
 
     public function rules()

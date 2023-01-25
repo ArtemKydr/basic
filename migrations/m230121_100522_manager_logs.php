@@ -14,13 +14,14 @@ class m230121_100522_manager_logs extends Migration
     {
         $this->createTable('manager_logs', [
             'id' => $this->primaryKey(),
+            'document_id'=>$this->string(),
             'personal_data_status'=>$this->boolean(),
             'manager_id'=>$this->string(),
             'user_id'=>$this->string(),
             'manager_fio'=>$this->string(),
             'user_fio'=>$this->string(),
             'document_status_change' => $this->string(),
-            'comment'=>$this->string(),
+            'comment'=>$this->text(),
             'datetime' => $this->string(),
         ]);
         $personal_data_status = "ALTER TABLE manager_logs ALTER personal_data_status SET DEFAULT 0";

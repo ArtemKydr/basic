@@ -21,9 +21,6 @@ class m230105_130503_students_documents extends Migration
             'university' => $this->string(),
             'collection' => $this->string(),
             'source' => $this->string(),
-            'expert'=>$this->string(),
-            'review'=>$this->string(),
-            'file_scan'=>$this->string(),
             'datetime' => $this->string(),
             'originality' => $this->integer(),
             'organization' => $this->string(),
@@ -40,7 +37,7 @@ class m230105_130503_students_documents extends Migration
 "In the draft",
 "Clear",
 "Article under consideration")',
-            'comment'=>$this->string(),
+            'comment'=>$this->text(),
             'draft_status'=> 'ENUM("draft","clear")',
         ]);
         $sql_document_status = "ALTER TABLE documents ALTER document_status SET DEFAULT 'Article under consideration'";

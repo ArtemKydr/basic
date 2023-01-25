@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\AdditionalFiles;
+use app\models\AdditionalStudentDocumentForm;
 use app\models\Documents;
 use app\models\image\form\UploadForm;
 use app\models\image\image;
@@ -251,9 +253,6 @@ class SiteController extends Controller
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
                 $filename = $model->file->baseName.'.'.$model->file->extension;
-                $expert = $model->expert->baseName.'.'.$model->expert->extension;
-                $review = $model->review->baseName.'.'.$model->review->extension;
-                $file_scan = $model->file_scan->baseName.'.'.$model->file_scan->extension;
                 $document->user_id = $user_id;
                 $document->title = $form['title'];
                 $document->fio = $user['fio'];
@@ -273,9 +272,6 @@ class SiteController extends Controller
                 $document->university = $form['university'];
                 $document->datetime = date('d.m.Y H:i:s');
                 $document->source = 'UploadDocument/' . $filename;
-                $document->expert = 'UploadDocumentExpert/' . $expert;
-                $document->review = 'UploadDocumentReview/' . $review;
-                $document->file_scan = 'UploadDocumentFileScan/' . $file_scan;
                 $document->save(false);
                 if ($draft_status == 'draft'){
                     Yii::$app->session->setFlash('success', 'Черновик статьи успешно загружен');
@@ -283,8 +279,10 @@ class SiteController extends Controller
                 else{
                     Yii::$app->session->setFlash('success', 'Статья отправлена на Антиплагиат. Проверка займет до рабочих 3 дней.');
                 }
+                return $this->redirect(['student-document']);
             } else {
                 Yii::$app->session->setFlash('error', 'Не удалось загрузить статью');
+                return $this->redirect(['student-document']);
             }
         }
 
@@ -311,7 +309,6 @@ class SiteController extends Controller
         $form = Yii::$app->request->post();
         $form = $form['Documents'];
         $manager = User::find()->where(['id'=>$user_id])->one();
-        $manager_model = new ManagerLogs();
         if ($form==null){
             $flag = 1;
         }else {
@@ -323,12 +320,26 @@ class SiteController extends Controller
                 $student_id = Documents::find()->select('user_id')->where(['id'=>$document_id])->one();
                 $student = User::find()->where(['id'=>$student_id])->one();
                 $model->originality = $form[$document_id]['originality'];
-                if ((int)$form[$document_id]['originality']<70){
+                $a = $form[$document_id]['originality'];
+                $b = $form[$document_id]['document_status'];
+                if ((int)$form[$document_id]['originality']<70 and $form[$document_id]['originality'] !=''){
                     $model->document_status = 'The article did not pass the originality test';
                 }else if ((int)$form[$document_id]['originality']>=70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test'){
                     Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                     return $this->redirect(['manager']);
                     die();
+                }
+                else if ($form[$document_id]['originality'] >=70 and $form[$document_id]['document_status']!='The article has been checked for originality'){
+                    if ($form[$document_id]['document_status']!='The article has been checked for originality'){
+                        $model->document_status = $form[$document_id]['document_status'];
+                    }else {
+                        $model->document_status = 'The article has been checked for originality';
+                    }
+                }
+                else if ($form[$document_id]['originality'] >=70){
+                    $model->document_status = 'The article has been checked for originality';
+                }else if ($form[$document_id]['originality'] !=''){
+                    $model->document_status = 'Article under consideration';
                 } else {
                     $model->document_status = $form[$document_id]['document_status'];
                 }
@@ -391,6 +402,7 @@ class SiteController extends Controller
 
                     $manager_model->document_status_change = $model->document_status;
                 }
+                $manager_model->document_id = $document_id;
                 $manager_model->manager_id = $manager['id'];
                 $manager_model->user_id = $student['id'];
                 $manager_model->manager_fio = $manager['fio'];
@@ -417,19 +429,22 @@ class SiteController extends Controller
     public function actionView($id)
     {
         $user_id = Yii::$app->user->id;
-        $a = Documents::find()->select('user_id')->where(['id'=>$id])->column();
+        $user = Documents::find()->select('user_id')->where(['id'=>$id])->column();
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'user'){
             return $this->redirect(['access-error']);
         }
-        $query = Documents::find()->select('*')->where(['user_id'=>$a]);
+        $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
+        $student = User::find()->where(['id'=>$student_id])->one();
+        $query = Documents::find()->select('*')->where(['user_id'=>$user]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
                 'pageSize' => 10,
             ],
         ]);
-        return $this->render('view',['dataProvider'=>$dataProvider]);
+        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->all();
+        return $this->render('view',['dataProvider'=>$dataProvider,'student'=>$student,'additional_files'=>$additional_files]);
     }
     public function actionUpdate($id)
     {
@@ -522,14 +537,67 @@ class SiteController extends Controller
             $manager_model->datetime = date('d.m.Y H:i:s');
             $manager_model->save();
             Yii::$app->session->setFlash('success', 'Успешно');
-            return $this->redirect(['manager','id'=>$id]);
+            return $this->redirect(['update','id'=>$id]);
         }
-        $data = ManagerLogs::find()->where(['user_id'=>$student_id])->all();
+        $data = ManagerLogs::find()->where(['user_id'=>$student_id])->andWhere(['document_id'=>$id])->all();
         return $this->render('update',['model'=>$model,'data'=>$data,'student'=>$student]);
     }
 
     public function actionAccessError()
     {
         return $this->render('access-error');
+    }
+
+    public function actionAdditionalStudentDocument()
+    {
+        $user_id = Yii::$app->user->id;
+        $user = User::find()->where(['id'=>$user_id])->one();
+        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
+        if ($role === 'manager'){
+            return $this->redirect(['access-error']);
+        }
+        $expert = $_FILES['AdditionalFiles']['name']['expert'];
+        $review = $_FILES['AdditionalFiles']['name']['review'];
+        $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
+        $model = new AdditionalFiles();
+        if (Yii::$app->request->isPost) {
+            if ($expert!='' and $review!='' and $file_scan!='')
+            {
+                $model->expert = UploadedFile::getInstance($model, 'expert');
+                $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
+                $model->review = UploadedFile::getInstance($model, 'review');
+            }else if ($expert!='' or $review!='' and $file_scan==''){
+                if ($expert!=''){
+                    $model->expert = UploadedFile::getInstance($model, 'expert');
+                }
+                if ($review!=''){
+                    $model->review = UploadedFile::getInstance($model, 'review');
+                }
+            }
+            else if ($expert!=''or $file_scan!='' and $review==''){
+                if ($file_scan!=''){
+                    $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
+                }
+                if ($review!=''){
+                    $model->review = UploadedFile::getInstance($model, 'review');
+                }
+            }
+            if ($model->upload()) {
+                $model->user_id = $user_id;
+                $model->fio = $user['fio'];
+                $model->expert_name = $expert;
+                $model->review_name = $review;
+                $model->file_scan_name = $file_scan;
+                $model->expert_source = 'UploadDocumentExpert/' . $expert;
+                $model->review_source = 'UploadDocumentReview/' . $review;
+                $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
+                $model->save();
+                Yii::$app->session->setFlash('success', 'Успешно');
+                return $this->redirect(['additional-student-document']);
+            }
+        }
+
+
+        return $this->render('additional-student-document',['model' => $model,]);
     }
 }
