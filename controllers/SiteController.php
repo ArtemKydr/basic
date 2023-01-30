@@ -320,10 +320,11 @@ class SiteController extends Controller
                 $student_id = Documents::find()->select('user_id')->where(['id'=>$document_id])->one();
                 $student = User::find()->where(['id'=>$student_id])->one();
                 $model->originality = $form[$document_id]['originality'];
-                $a = $form[$document_id]['originality'];
-                $b = $form[$document_id]['document_status'];
                 if ((int)$form[$document_id]['originality']<70 and $form[$document_id]['originality'] !=''){
                     $model->document_status = 'The article did not pass the originality test';
+                    if($form[$document_id]['document_status']!='The article did not pass the originality test'){
+                        Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
+                    }
                 }else if ((int)$form[$document_id]['originality']>=70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test'){
                     Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                     return $this->redirect(['manager']);
@@ -372,20 +373,28 @@ class SiteController extends Controller
                 elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
                     $manager_model->document_status_change = $model->document_status;
                     $manager_model->comment = $model->comment;
+                    $change_document_email_model = new SendEmailForm();
+                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
                 }
                 elseif ($document_status1==$document_status2 and $comment1!=$comment2){
                     $manager_model->comment = $model->comment;
                 }
                 elseif ($document_status1!=$document_status2 and $comment1==$comment2){
                     $manager_model->document_status_change = $model->document_status;
+                    $change_document_email_model = new SendEmailForm();
+                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
                 }
                 ////b
                 elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
                     $manager_model->document_status_change = $model->document_status;
+                    $change_document_email_model = new SendEmailForm();
+                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
                 }
                 elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
                     $manager_model->document_status_change = $model->document_status;
+                    $change_document_email_model = new SendEmailForm();
+                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
                 }
                 elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
@@ -401,6 +410,8 @@ class SiteController extends Controller
                 else if ($document_status1!=$document_status2){
 
                     $manager_model->document_status_change = $model->document_status;
+                    $change_document_email_model = new SendEmailForm();
+                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
                 }
                 $manager_model->document_id = $document_id;
                 $manager_model->manager_id = $manager['id'];
@@ -411,11 +422,6 @@ class SiteController extends Controller
                 $manager_model->save();
             }
             return $this->redirect(['manager']);
-        }
-        $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user'){
-            return $this->redirect(['access-error']);
         }
         $query = Documents::find();
         $dataProvider = new ActiveDataProvider([
@@ -466,6 +472,11 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())){
             if ((int)$form['Documents']['originality']<70){
                 $model->document_status = 'The article did not pass the originality test';
+                if($form['document_status']!='The article did not pass the originality test'){
+                    Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
+                    return $this->redirect(['update','id'=>$id]);
+                    die();
+                }
             }
             if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'The article did not pass the originality test'){
                 Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
@@ -487,7 +498,7 @@ class SiteController extends Controller
             if ($personal_data1==$personal_data2 and $comment1==$comment2 and $document_status1==$document_status2)
             {
                 Yii::$app->session->setFlash('success', 'Успешно');
-                return $this->redirect(['manager','id'=>$id]);
+                return $this->redirect(['update','id'=>$id]);
             }else if ($personal_data1!=$personal_data2 and $comment1!=$comment2){
                 $manager_model->comment = $model->comment;
                 $manager_model->personal_data_status = $form['Documents']['personal_data'];
@@ -502,19 +513,27 @@ class SiteController extends Controller
             elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
                 $manager_model->document_status_change = $model->document_status;
                 $manager_model->comment = $model->comment;
+                $change_document_email_model = new SendEmailForm();
+                $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
             }
             elseif ($document_status1==$document_status2 and $comment1!=$comment2){
                 $manager_model->comment = $model->comment;
             }
             elseif ($document_status1!=$document_status2 and $comment1==$comment2){
                 $manager_model->document_status_change = $model->document_status;
+                $change_document_email_model = new SendEmailForm();
+                $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
             }
             ////b
             elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
                 $manager_model->document_status_change = $model->document_status;
+                $change_document_email_model = new SendEmailForm();
+                $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
             }
             elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
                 $manager_model->document_status_change = $model->document_status;
+                $change_document_email_model = new SendEmailForm();
+                $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
             }
             elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
             }
@@ -527,9 +546,11 @@ class SiteController extends Controller
                 $manager_model->comment = $model->comment;
             }
             else if ($document_status1!=$document_status2){
-
                 $manager_model->document_status_change = $model->document_status;
+                $change_document_email_model = new SendEmailForm();
+                $change_document_email_model->sendEmailChangeDocumentStatus($id);
             }
+            $manager_model->document_id = $id;
             $manager_model->manager_id = $manager['id'];
             $manager_model->user_id = $student['id'];
             $manager_model->manager_fio = $manager['fio'];
