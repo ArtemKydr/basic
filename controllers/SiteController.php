@@ -580,38 +580,49 @@ class SiteController extends Controller
         $expert = $_FILES['AdditionalFiles']['name']['expert'];
         $review = $_FILES['AdditionalFiles']['name']['review'];
         $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
-        $model = new AdditionalFiles();
+        $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->one();
+        if($model==null){
+            $model = new AdditionalFiles();
+        }
         if (Yii::$app->request->isPost) {
             if ($expert!='' and $review!='' and $file_scan!='')
             {
                 $model->expert = UploadedFile::getInstance($model, 'expert');
                 $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 $model->review = UploadedFile::getInstance($model, 'review');
+                $model->review_name = $review;
+                $model->expert_name = $expert;
+                $model->file_scan_name = $file_scan;
+                $model->expert_source = 'UploadDocumentExpert/' . $expert;
+                $model->review_source = 'UploadDocumentReview/' . $review;
+                $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
             }else if ($expert!='' or $review!='' and $file_scan==''){
                 if ($expert!=''){
+                    $model->expert_name = $expert;
+                    $model->expert_source = 'UploadDocumentExpert/' . $expert;
                     $model->expert = UploadedFile::getInstance($model, 'expert');
                 }
                 if ($review!=''){
+                    $model->review_name = $review;
+                    $model->review_source = 'UploadDocumentReview/' . $review;
                     $model->review = UploadedFile::getInstance($model, 'review');
                 }
             }
             else if ($expert!=''or $file_scan!='' and $review==''){
                 if ($file_scan!=''){
+                    $model->file_scan_name = $file_scan;
+                    $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
                     $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 }
-                if ($review!=''){
-                    $model->review = UploadedFile::getInstance($model, 'review');
+                if ($expert!=''){
+                    $model->expert_name = $expert;
+                    $model->expert_source = 'UploadDocumentExpert/' . $expert;
+                    $model->expert = UploadedFile::getInstance($model, 'expert');
                 }
             }
             if ($model->upload()) {
                 $model->user_id = $user_id;
                 $model->fio = $user['fio'];
-                $model->expert_name = $expert;
-                $model->review_name = $review;
-                $model->file_scan_name = $file_scan;
-                $model->expert_source = 'UploadDocumentExpert/' . $expert;
-                $model->review_source = 'UploadDocumentReview/' . $review;
-                $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
                 $model->save();
                 Yii::$app->session->setFlash('success', 'Успешно');
                 return $this->redirect(['additional-student-document']);
