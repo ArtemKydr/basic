@@ -6,6 +6,22 @@ use yii\helpers\Html;
 
 $this->title = 'Требования';
 $this->params['breadcrumbs'][] = $this->title;
+
+$css =<<<CSS
+.container{
+max-width: 1920px !important;
+padding: 0px 340px 0px 340px;
+}
+.navbar.navbar-expand-md.navbar-dark.bg-dark.fixed-top.navbar{
+display: block;
+width: 100%;
+}
+.navbar-nav.nav{
+width: 900px;
+}
+
+CSS;
+$this->registerCss($css);
 ?>
 
 <div>
