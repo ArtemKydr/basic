@@ -9,6 +9,10 @@ use yii\helpers;
 
 $this->title = 'Загрузка документов';
 $this->params['breadcrumbs'][] = $this->title;
+$visible = 'visible';
+if ($count_clear_document>=2){
+    $visible = 'hidden';
+}
 $css =<<<CSS
 .form-group {
 display: flex;
@@ -50,9 +54,16 @@ width: 50%;
 background: grey;
 margin-left: 20px;
 border: none;
+visibility: $visible;
+}
+.btn.btn-primary{
+visibility: $visible;
 }
 .document_status_forms{
 visibility: visible;
+}
+.additional-documents{
+visibility: $visible;
 }
 CSS;
 $this->registerCss($css);
@@ -111,7 +122,7 @@ $gridColumns = $grid_columns = [
         'label' => 'Комментарий организатора',
     ],
 
-]
+];
 ?>
 <div class="site-student-document" >
     <h1><?= Html::encode($this->title) ?></h1>
@@ -134,13 +145,12 @@ $gridColumns = $grid_columns = [
                 <?= $form->field($model, 'file')->fileInput() ?>
             </div>
             <div>
-
             </div>
 
         </div>
     </div>
 
-    <div class="col-lg-offset-1 col-lg-11" style="padding: 0">
+    <div class="col-lg-offset-1 col-lg-11">
         <?= Html::submitButton('Отправить', [
                 'data' => ['confirm' => 'Данный файл будет опубликован при оформлении полного комплекта документов. Прикладывайте пожалуйста итоговую версию статьи. У вас есть только 2 попытки для отправки материалов.'],
                 'class' => 'btn btn-primary',
@@ -149,13 +159,14 @@ $gridColumns = $grid_columns = [
         <?= Html::submitButton('В черновик', [
                 'class' => 'btn btn-primary draft',
                 'name'=>"action", 'value'=>"draft" ]) ?>
-        <div style="margin-left: 20px">
+        <div class="additional-documents" style="margin-left: 20px">
             <a href="/web/site/additional-student-document">Загрузить дополнительные документы</a>
         </div>
     </div>
 
     <?php ActiveForm::end() ?>
     <div style="margin-top: 50px;">
+        <?php echo 'Количество чистовиков, не прошедших проверку на оригинальность: '.$count_clear_document ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => $gridColumns,

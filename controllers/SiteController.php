@@ -224,16 +224,6 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionStudent()
-    {
-        $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager'){
-            return $this->redirect(['access-error']);
-        }
-        return $this->render('student');
-    }
-
     public function actionStudentDocument()
     {
         $user_id = Yii::$app->user->id;
@@ -285,7 +275,7 @@ class SiteController extends Controller
                 return $this->redirect(['student-document']);
             }
         }
-
+        $count_clear_document = Documents::find()->where(['user_id'=>$user_id])->andWhere(['draft_status'=>'clear'])->andWhere(['document_status'=>'The article did not pass the originality test'])->count();
         $query = Documents::find()->where(['email'=>$user['email']]);
         $document_status_forms = Documents::find()->select('document_status')->where(['email'=>$user['email']])->column();
         $dataProvider = new ActiveDataProvider([
@@ -295,7 +285,7 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username,'document_status_forms'=>$document_status_forms]);
+        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username,'document_status_forms'=>$document_status_forms,'count_clear_document'=>$count_clear_document]);
     }
 
     public function actionManager()
