@@ -10,8 +10,10 @@ use yii\helpers;
 $this->title = 'Загрузка документов';
 $this->params['breadcrumbs'][] = $this->title;
 $visible = 'visible';
+$message ='';
 if ($count_clear_document>=2){
     $visible = 'hidden';
+    $message = 'Извините, количество документов, не прошедших оригинальность больше или равно двух. Прием документов на данный конкурс закрыт';
 }
 $css =<<<CSS
 .form-group {
@@ -166,7 +168,7 @@ $gridColumns = $grid_columns = [
 
     <?php ActiveForm::end() ?>
     <div style="margin-top: 50px;">
-        <?php echo 'Количество чистовиков, не прошедших проверку на оригинальность: '.$count_clear_document ?>
+        <?php echo 'Количество чистовиков, не прошедших проверку на оригинальность: '.$count_clear_document.'<br>'.$message ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => $gridColumns,
