@@ -53,7 +53,7 @@ $gridColumns = [
         'format' => 'raw',
         'label' => 'Скачать статью',
         'value'=>function ($data) {
-            return Html::a(Html::encode("$data->title"),"http://basic/web/$data->source");}
+            return Html::a(Html::encode("$data->title"),"/web/$data->source");}
 
     ],
 

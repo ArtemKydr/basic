@@ -61,9 +61,9 @@ class AdditionalFiles extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'expert'=>'Экспертное заключение',
-            'review'=>'Рецензия',
-            'file_scan'=>'Файл статьи с подписями',
+            'expert'=>'Экспертное заключение (pdf, jpg,png)',
+            'review'=>'Рецензия (pdf, jpg,png)',
+            'file_scan'=>'Файл статьи с подписями (pdf, jpg,png)',
 
         ];
     }

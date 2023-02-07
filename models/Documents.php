@@ -29,7 +29,11 @@ class Documents extends ActiveRecord
             'document_status'=>'Статус статьи',
             'datetime'=>'Дата подачи',
             'source'=>'Ссылка',
-            'personal_data'=>'П/Д'
+            'personal_data'=>'П/Д',
+            'user_id'=>'Регистрационный номер студента',
+            'coauthor'=>'соавторы',
+            'collection'=>'Сборник',
+            'draft_status'=>'Черновик/чистовик',
 
         ];
     }

@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\form\ActiveForm;
 use kartik\builder\TabularForm;
+use kartik\export\ExportMenu;
 
 $css =<<<CSS
 
@@ -28,11 +29,96 @@ width: 0;
 
 CSS;
 $this->registerCss($css);
+$gridColumns = [
+    [
+        'attribute' => 'title',
+        'format' => 'raw',
+        'value'=>function ($data) {
+            return Html::a(Html::encode("$data->title"),"/web/$data->source");},
+        'label' => 'Название',
+
+    ],
+    [
+        'attribute' => 'authors',
+        'format' => 'text',
+        'label' => 'Авторы',
+    ],[
+        'attribute' => 'nr',
+        'format' => 'text',
+        'label' => 'Н/Р',
+    ],[
+        'attribute' => 'university',
+        'format' => 'text',
+        'label' => 'ВУЗ',
+    ],[
+        'attribute' => 'collection',
+        'format' => 'text',
+        'label' => 'Сборник',
+        'value' => function ($data) {
+
+            $rusCollection = ["Almanac"=>'Альманах',
+            ];
+            $documentCollection = $rusCollection[$data->collection];
+
+            return $documentCollection ;
+        },
+    ],
+    [
+        'attribute' => 'document_status',
+        'format' => 'text',
+        'label' => 'Статус',
+        'headerOptions' => ['style' => 'width:16%'],
+        'value' => function ($data) {
+
+            $rusDocumentStatus = ["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
+                "The article has been checked for originality"=>'Статья прошла проверку на оригинальность',
+                "The article does not meet the requirements"=>'Статья не соответствует требованиям',
+                "The article was rejected as an incomplete set of documents"=>'Статья отклонена, так как неполный комплект документов',
+                "The article has been accepted for review"=>'Статья принята к рецензированию',
+                "The article has been accepted for publication"=>'Статья принята к публикации',
+                "In processing"=> 'В процессе',
+                "Article under consideration"=>'Статья на рассмотрении',
+                "In the draft" => 'В черновике'
+            ];
+            $documentStatus = $rusDocumentStatus[$data->document_status];
+
+            return $documentStatus ;
+        },
+    ],
+    [
+        'attribute' => 'comment',
+        'format' => 'text',
+        'label' => 'Комментарий организатора',
+    ],
+    [
+        'attribute' => 'datetime',
+        'format' => 'text',
+        'label' => 'Дата',
+    ],
+
+
+];
 
 ?>
 <div class ='site-index'>
     <div class="top" style="display: flex; justify-content: space-between">
         <h2>Поданные заявки</h2>
+    </div>
+    <div>
+        <h5><b>Выгрузка</b></h5>
+        <?php
+        echo ExportMenu::widget([ 'dataProvider' => $dataProvider,
+            'dropdownOptions' => [
+                'label' => 'Формат',
+                            ],
+            'columnSelectorOptions' => [
+                'label' => 'Колонки',
+                            ],
+            'columns' => $gridColumns,
+            'clearBuffers' => true,//optional
+
+        ]);
+        ?>
     </div>
     <div style="margin-top: 50px;">
         <?php
@@ -89,7 +175,7 @@ $this->registerCss($css);
             'type'=>TabularForm::INPUT_STATIC,
             'columnOptions'=>['width'=>'150px',],
             'value'=>function ($data) {
-                return Html::a(Html::encode("$data->title"),"http://basic/web/$data->source");},
+                return Html::a(Html::encode("$data->title"),"/web/$data->source");},
 
         ];
         $attribs['comment']['comment'] = [

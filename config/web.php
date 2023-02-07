@@ -4,7 +4,7 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'basic',
+    'id' => 'studnauka.itmo.ru',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'language'=>'RU-ru',
@@ -21,6 +21,7 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Z_ueWYueitLANXeNVGKwdPI3UFDCGmm5',
+            'baseUrl'=> '',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -53,6 +54,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<action:[-a-zA-Z0-9_]+>' => 'site/<action>',
             ],
         ],
 

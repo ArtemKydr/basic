@@ -9,6 +9,7 @@ width: 64%;
 height: 230px; 
 margin-top: 20px; 
 padding: 28px;
+color: white;
 }
 .green{
 position: relative;

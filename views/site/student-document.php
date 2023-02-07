@@ -75,7 +75,7 @@ $gridColumns = $grid_columns = [
         'attribute' => 'title',
         'format' => 'raw',
         'value'=>function ($data) {
-            return Html::a(Html::encode("$data->title"),"http://basic/web/$data->source");},
+            return Html::a(Html::encode("$data->title"),"/web/$data->source");},
         'label' => 'Название',
 
     ],
@@ -95,6 +95,14 @@ $gridColumns = $grid_columns = [
         'attribute' => 'collection',
         'format' => 'text',
         'label' => 'Сборник',
+        'value' => function ($data) {
+
+            $rusCollection = ["Almanac"=>'Альманах',
+            ];
+            $documentCollection = $rusCollection[$data->collection];
+
+            return $documentCollection ;
+        },
     ],
     [
         'attribute' => 'document_status',

@@ -252,6 +252,7 @@ class SiteController extends Controller
                 $document->authors = $user['fio'];
                 $document->email = $user['email'];
                 $document->phone = $user['phone'];
+                $document->collection = 'Almanac';
                 $document->draft_status = $draft_status;
                 if ($draft_status == 'draft'){
                     $document->document_status = 'In the draft';
