@@ -14,7 +14,7 @@ use app\models\LoginForm;
 AppAsset::register($this);
 $role = Yii::$app->user->identity->role;
 
-$css =<<<CSS
+$css = <<<CSS
 
 .navbar.navbar-expand-md.navbar-dark.bg-dark.fixed-top.navbar{
 display: block;
@@ -56,6 +56,20 @@ margin-top: 16px;
 .container-body{
 margin: 20px 21% 20px 21%;
 }
+.navbar-dark .navbar-toggler {
+  color: rgba(0,0,0,0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-dark .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+@media screen and (max-width: 480px) {
+.logoItmo{
+width: 280px;
+}
+    
+    }
 
 
 CSS;

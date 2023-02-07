@@ -45,6 +45,77 @@ border: 2px solid #000000;
 .btn:hover {
 background: #D8D8D8;
 }
+@media screen and (max-width: 480px) {
+    .p-blue {
+        font-size: 16px !important;
+    }
+        .p-green {
+        font-size: 12px!important;
+    }
+    .blue{
+    width: 100%;
+    padding: 5px 10px;
+    margin-left: 0%;
+    }
+    .green{
+    width: 100%;
+    padding: 5px 10px;
+    margin-left: 0%;
+    }
+    .h4-green{
+    font-size: 18px!important;
+    }
+    h1{
+    font-size: 24px !important;
+    }
+    .black{
+    width: 267px;
+    height: 32px;
+    margin-left: -16%;
+    margin-top: 32%;
+    padding-top: 4px;
+    }
+    .p-black{
+    font-size: 16px !important;
+    width: 100%;
+    }
+}
+@media screen and (max-width: 820px) and (min-width: 481px) {
+    .p-blue {
+        font-size: 16px !important;
+    }
+        .p-green {
+        font-size: 12px!important;
+    }
+    .blue{
+    width: 100%;
+    padding: 5px 10px;
+    margin-left: 0%;
+    }
+    .green{
+    width: 100%;
+    padding: 5px 10px;
+    margin-left: 0%;
+    }
+    .h4-green{
+    font-size: 18px!important;
+    }
+    h1{
+    font-size: 24px !important;
+    }
+    .black{
+    width: 267px;
+    height: 32px;
+    margin-left: 20%;
+    margin-top: 32%;
+    padding-top: 4px;
+    }
+    .p-black{
+    font-size: 16px !important;
+    width: 100%;
+    }
+}
+    
 
 
 CSS;
@@ -54,20 +125,20 @@ $this->registerCss($css);
 
     <h1>ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ<br> НАУЧНЫХ МЕРОПРИЯТИЙ ИТМО</h1>
     <div class="blue">
-        <p style="font-weight: 400;font-size: 24px;">
+        <p class = "p-blue"style="font-weight: 400;font-size: 24px;">
             Как узнать актуальные требования по оформлению материала?<br>
             Как зарегистрировать свой личный кабинет?<br>
             Как подать материал для публикации?<br>
         </p>
     </div>
     <div class="green">
-        <h4 style="font-weight: bold; margin-bottom: 4px" align="right">Альманах научных работ молодых ученых Университета ИТМО</h4>
-        <p style="font-size: 14px;" align="right">Пятьдесят вторая (LII) научная и учебно-методическая конференция Университета ИТМО</p>
+        <h4 class="h4-green" style="font-weight: bold; margin-bottom: 4px" align="right">Альманах научных работ молодых ученых Университета ИТМО</h4>
+        <p class="p-green" style="font-size: 14px;" align="right">Пятьдесят вторая (LII) научная и учебно-методическая конференция Университета ИТМО</p>
         <a href="site/requirements" class="btn">Подробнее...</a>
 
         <div class="black">
-            <p align="right" style="font-weight: 600; font-size: 24px;">
-                Подача <br>
+            <p class="p-black" align="right" style="font-weight: 600; font-size: 24px;">
+                Подача
                 до 15 марта
             </p>
         </div>

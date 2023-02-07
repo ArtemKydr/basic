@@ -50,7 +50,7 @@ class UploadDocumentForm extends Model
             'title'=>'Название статьи',
             'authors'=>'Автор',
             'university'=>'ВУЗ',
-            'file'=>'Статья (формат .docx)',
+            'file'=>"Статья      (docx)",
             'coauthor'=>'Соавторы',
             'draft'=>'Черновик',
             'expert'=>'Экспертное заключение',
