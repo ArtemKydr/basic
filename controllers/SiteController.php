@@ -242,7 +242,8 @@ class SiteController extends Controller
             if ($result==true){
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
-                $filename = $model->file->baseName.'.'.$model->file->extension;
+                $filename = UploadDocumentForm::transliterate($model->file->baseName);
+                $filename = mb_strtolower($filename).'.'.$model->file->extension;
                 $document->user_id = $user_id;
                 $document->title = $form['title'];
                 $document->fio = $user['fio'];
