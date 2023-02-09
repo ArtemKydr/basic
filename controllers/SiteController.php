@@ -582,8 +582,6 @@ class SiteController extends Controller
         if (Yii::$app->request->isPost) {
             if ($expert!='' and $review!='' and $file_scan!='')
             {
-                $filename = UploadDocumentForm::transliterate($model->file->baseName);
-                $filename = mb_strtolower($filename).'.'.$model->file->extension;
                 $model->expert = UploadedFile::getInstance($model, 'expert');
                 $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 $model->review = UploadedFile::getInstance($model, 'review');
