@@ -87,7 +87,7 @@ $this->registerCss($css);
             if($additional_files[$i]['review_name']!=null or $additional_files[$i]['review_name']!=''){
                 $review_name = $additional_files[$i]['review_name'];
                 $review_source = $additional_files[$i]['review_source'];
-                echo '<div><a href="/web/'.$review_source.'">'.$review_name.'</a><br>';
+                echo '<div><a href="web/UploadDocumentExpert/ehkspertnoe_zaklyuchenie.docx.docx'.$review_source.'">'.$review_name.'</a><br>';
             }
             if($additional_files[$i]['file_scan_name']!=null or $additional_files[$i]['file_scan_name']!=''){
                 $file_scan_name = $additional_files[$i]['file_scan_name'];

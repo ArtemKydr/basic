@@ -170,7 +170,7 @@ $gridColumns = $grid_columns = [
                 'class' => 'btn btn-primary draft',
                 'name'=>"action", 'value'=>"draft" ]) ?>
         <div class="additional-documents" style="margin-left: 20px">
-            <a href="/web/site/additional-student-document">Загрузить дополнительные документы</a>
+            <a href="/additional-student-document">Загрузить дополнительные документы</a>
         </div>
     </div>
 

@@ -570,8 +570,11 @@ class SiteController extends Controller
             return $this->redirect(['access-error']);
         }
         $expert = $_FILES['AdditionalFiles']['name']['expert'];
+        $expert = mb_strtolower(UploadDocumentForm::transliterate($expert));
         $review = $_FILES['AdditionalFiles']['name']['review'];
+        $review =  mb_strtolower(UploadDocumentForm::transliterate($review));
         $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
+        $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
         $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->one();
         if($model==null){
             $model = new AdditionalFiles();
@@ -579,6 +582,8 @@ class SiteController extends Controller
         if (Yii::$app->request->isPost) {
             if ($expert!='' and $review!='' and $file_scan!='')
             {
+                $filename = UploadDocumentForm::transliterate($model->file->baseName);
+                $filename = mb_strtolower($filename).'.'.$model->file->extension;
                 $model->expert = UploadedFile::getInstance($model, 'expert');
                 $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 $model->review = UploadedFile::getInstance($model, 'review');
