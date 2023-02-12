@@ -337,7 +337,10 @@ class SiteController extends Controller
                 }else if ($form[$document_id]['originality'] !=''){
                     $model->document_status = 'Article under consideration';
                 } else {
-                    $model->document_status = $form[$document_id]['document_status'];
+                    if (isset($form[$document_id]['document_status'])){
+                        $model->document_status = $form[$document_id]['document_status'];
+                    }
+                    $model->document_status = 'In the draft';
                 }
                 $model->personal_data = $form[$document_id]['personal_data'];
                 $model->comment = $form[$document_id]['comment'];
