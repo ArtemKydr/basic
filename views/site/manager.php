@@ -190,7 +190,7 @@ $gridColumns = [
             'form'=>$form,
             'actionColumn'=>[
     'class' => '\kartik\grid\ActionColumn',
-    'deleteOptions' => ['style' => 'display:none;'],
+    'deleteOptions' => ['style' => 'display:none !important;'],
                 'updateOptions' => ['style' => 'display:inline;','label'=>'Изменить'],
     'width' => '60px',
                 'dropdown'=>true,
