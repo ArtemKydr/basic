@@ -572,17 +572,17 @@ class SiteController extends Controller
         if ($role === 'manager'){
             return $this->redirect(['access-error']);
         }
-        $expert = $_FILES['AdditionalFiles']['name']['expert'];
-        $expert = mb_strtolower(UploadDocumentForm::transliterate($expert));
-        $review = $_FILES['AdditionalFiles']['name']['review'];
-        $review =  mb_strtolower(UploadDocumentForm::transliterate($review));
-        $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
-        $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
         $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->one();
         if($model==null){
             $model = new AdditionalFiles();
         }
         if (Yii::$app->request->isPost) {
+            $expert = $_FILES['AdditionalFiles']['name']['expert'];
+            $expert = mb_strtolower(UploadDocumentForm::transliterate($expert));
+            $review = $_FILES['AdditionalFiles']['name']['review'];
+            $review =  mb_strtolower(UploadDocumentForm::transliterate($review));
+            $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
+            $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
             if ($expert!='' and $review!='' and $file_scan!='')
             {
                 $model->expert = UploadedFile::getInstance($model, 'expert');
