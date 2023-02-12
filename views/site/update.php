@@ -50,7 +50,11 @@ $form = ActiveForm::begin([
         echo 'Пока изменений нет...';
     }
     for($i=0;$i<count($data);$i++){
-        $personal_data_early = $data[$i-1]['personal_data_status'];
+        if (isset($data[$i-1]['personal_data_status'])){
+            $personal_data_early = $data[$i-1]['personal_data_status'];
+        }else {
+            $personal_data_early = 0;
+        }
         $personal_data = $data[$i]['personal_data_status'];
         $document_status_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
         $document_status_change = $rusDocumentStatus[$data[$i]['document_status_change']];
