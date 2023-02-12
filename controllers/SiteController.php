@@ -302,11 +302,11 @@ class SiteController extends Controller
         }
         $model = new Documents();
         $form = Yii::$app->request->post();
-        $form = $form['Documents'];
         $manager = User::find()->where(['id'=>$user_id])->one();
-        if ($form==null){
+        if ($form==null or $form==[]){
             $flag = 1;
         }else {
+            $form = $form['Documents'];
             for ($i=0;$i<count($form);$i++){
                 $keys = array_keys($form);
                 $manager_model = new ManagerLogs();
