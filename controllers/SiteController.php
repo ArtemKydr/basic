@@ -233,10 +233,11 @@ class SiteController extends Controller
         }
         $user = User::find()->where(['id'=>$user_id])->one();
         $username = User::find()->select('fio')->where(['id'=>$user_id])->column();
-        $form = Yii::$app->request->post('UploadDocumentForm');
-        $draft_status = Yii::$app->request->post()['action'];
+
         $model = new UploadDocumentForm();
         if (Yii::$app->request->post('UploadDocumentForm')) {
+            $form = Yii::$app->request->post('UploadDocumentForm');
+            $draft_status = Yii::$app->request->post()['action'];
             $model->file = UploadedFile::getInstance($model, 'file');
             $result = $model->upload();
             if ($result==true){
