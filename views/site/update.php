@@ -50,25 +50,12 @@ $form = ActiveForm::begin([
         echo 'Пока изменений нет...';
     }
     for($i=0;$i<count($data);$i++){
-        if (isset($data[$i-1]['personal_data_status'])){
-            $personal_data_early = $data[$i-1]['personal_data_status'];
-        }else {
-            $personal_data_early = 0;
-        }
+        $personal_data_early = $data[$i-1]['personal_data_status'];
         $personal_data = $data[$i]['personal_data_status'];
-        if (isset($rusDocumentStatus[$data[$i-1]['document_status_change']])){
-            $document_status_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
-        }else {
-            $document_status_change_early = 'Article under consideration';
-        }
+        $document_status_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
         $document_status_change = $rusDocumentStatus[$data[$i]['document_status_change']];
 
         $comment_change_early = $data[$i-1]['comment'];
-        if (isset($data[$i-1]['comment'])){
-            $comment_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
-        }else {
-            $comment_change_early = ' ';
-        }
         $comment_change = $data[$i]['comment'];
 
         $date_change = $data[$i]['datetime'];

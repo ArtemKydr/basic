@@ -478,13 +478,12 @@ class SiteController extends Controller
                 if($form['document_status']!='The article did not pass the originality test'){
                     Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                     return $this->redirect(['update','id'=>$id]);
-                    die();
+
                 }
             }
             if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'The article did not pass the originality test'){
                 Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                 return $this->redirect(['update','id'=>$id]);
-                die();
             }
             $personal_data_status = Documents::find()->select('personal_data')->where(['user_id'=>$student_id])->column();
             $model->comment = $form['Documents']['comment'];
