@@ -12,7 +12,6 @@ use yii\bootstrap4\NavBar;
 use app\models\LoginForm;
 
 AppAsset::register($this);
-$role = Yii::$app->user->identity->role;
 
 $css = <<<CSS
 
@@ -99,7 +98,7 @@ $this->registerCss($css);
         ],
     ]);
     if (!Yii::$app->user->isGuest){
-
+        $role = Yii::$app->user->identity->role;
         if ($role == 'admin') {
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
