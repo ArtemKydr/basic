@@ -306,9 +306,7 @@ class SiteController extends Controller
         if ($form==null or $form==[]){
             $flag = 1;
         }else {
-            if (isset($form['Documents'])){
-                $form = $form['Documents'];
-            }
+            $form = $form['Documents'];
             for ($i=0;$i<count($form);$i++){
                 $keys = array_keys($form);
                 $manager_model = new ManagerLogs();
