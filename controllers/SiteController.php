@@ -339,8 +339,9 @@ class SiteController extends Controller
                 } else {
                     if (isset($form[$document_id]['document_status'])){
                         $model->document_status = $form[$document_id]['document_status'];
+                    }else {
+                        $model->document_status = 'In the draft';
                     }
-                    $model->document_status = 'In the draft';
                 }
                 $model->personal_data = $form[$document_id]['personal_data'];
                 $model->comment = $form[$document_id]['comment'];
@@ -350,7 +351,11 @@ class SiteController extends Controller
                 $personal_data2 = $form[$document_id]['personal_data'];
                 $comment1 = $check['comment'];
                 $comment2 = $form[$document_id]['comment'];
-                $document_status1 = $form[$document_id]['document_status'];
+                if (isset($form[$document_id]['document_status'])){
+                    $document_status1 = $form[$document_id]['document_status'];
+                }else{
+                    $document_status1 = 'In the draft';
+                }
                 $document_status2 = $check['document_status'];
                 $model->save(false);
 
