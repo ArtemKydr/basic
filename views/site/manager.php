@@ -27,6 +27,7 @@ width: 0;
 }
 
 
+
 CSS;
 $this->registerCss($css);
 $gridColumns = [
@@ -183,9 +184,18 @@ $gridColumns = [
             'widgetClass'=>\kartik\widgets\SwitchInput::classname()
         ];
 
+
         echo TabularForm::widget([
             'dataProvider'=>$dataProvider,
             'form'=>$form,
+            'actionColumn'=>[
+    'class' => '\kartik\grid\ActionColumn',
+    'deleteOptions' => ['style' => 'display:none;'],
+                'updateOptions' => ['style' => 'display:inline;','label'=>'Изменить'],
+    'width' => '60px',
+                'dropdown'=>true,
+                'viewOptions'=>['label'=>'Просмотр']
+],
             'attributes'=>$attribs,
             'gridSettings'=>[
                 'condensed'=>true,
