@@ -230,7 +230,7 @@ class SiteController extends Controller
     {
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager'){
+        if ($role === 'manager' or Yii::$app->user->isGuest){
             return $this->redirect(['access-error']);
         }
         $user = User::find()->where(['id'=>$user_id])->one();
@@ -297,7 +297,7 @@ class SiteController extends Controller
     {
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user'){
+        if ($role === 'user' or Yii::$app->user->isGuest){
             return $this->redirect(['access-error']);
         }
         $model = new Documents();
@@ -440,7 +440,7 @@ class SiteController extends Controller
         $user_id = Yii::$app->user->id;
         $user = Documents::find()->select('user_id')->where(['id'=>$id])->column();
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user'){
+        if ($role === 'user' or Yii::$app->user->isGuest){
             return $this->redirect(['access-error']);
         }
         $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
@@ -460,7 +460,7 @@ class SiteController extends Controller
 
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user'){
+        if ($role === 'user'  or Yii::$app->user->isGuest){
             return $this->redirect(['access-error']);
         }
         $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
@@ -577,7 +577,7 @@ class SiteController extends Controller
         $user_id = Yii::$app->user->id;
         $user = User::find()->where(['id'=>$user_id])->one();
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager'){
+        if ($role === 'manager' or Yii::$app->user->isGuest){
             return $this->redirect(['access-error']);
         }
         $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->andWhere(['document_id'=>$document_id])->one();
