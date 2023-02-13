@@ -25,7 +25,6 @@ $rusDocumentStatus = ["The article did not pass the originality test"=>'Стат
     "In processing"=> 'В процессе',
     "Article under consideration"=>'Статья на рассмотрении',
     "In the draft" => 'В черновике',
-    null => ' ',
 ];
 $form = ActiveForm::begin([
     'id' => 'update-form',
