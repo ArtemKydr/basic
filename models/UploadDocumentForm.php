@@ -28,7 +28,9 @@ class UploadDocumentForm extends Model
     public function rules()
     {
         return [
-            [['title','fio','organization','city','email','phone','file'],'required','message'=>'*']
+            [['title','fio','organization','city','email','phone','file'],'required','message'=>'*'],
+            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'docx'],
+
         ];
     }
 
@@ -46,13 +48,13 @@ class UploadDocumentForm extends Model
             'fio'=>'ФИО',
             'phone'=>'Телефон',
             'city'=>'Город',
-            'organization'=>'Организация',
-            'nr'=>'Научный руководитель',
+            'organization'=>'Организация (Полное название)',
+            'nr'=>'Научный руководитель (ФИО)',
             'title'=>'Название статьи',
             'authors'=>'Автор',
-            'university'=>'ВУЗ',
+            'university'=>'ВУЗ (Полное название)',
             'file'=>"Статья      (docx)",
-            'coauthor'=>'Соавторы',
+            'coauthor'=>'Соавторы (ФИО)',
             'draft'=>'Черновик',
             'expert'=>'Экспертное заключение',
             'review'=>'Рецензия',

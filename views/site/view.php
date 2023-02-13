@@ -73,7 +73,7 @@ $this->registerCss($css);
     'columns' => $gridColumns,
 ]) ?>
 <div style="margin-top: 20px">
-    <h4>Изменения</h4>
+    <h4>Загруженные документы</h4>
     <?php
     if(!$additional_files){
         echo 'Дополнительные файлы пока не загружены...';
@@ -82,17 +82,17 @@ $this->registerCss($css);
             if($additional_files[$i]['expert_name']!=null or $additional_files[$i]['expert_name']!=''){
                 $expert_name = $additional_files[$i]['expert_name'];
                 $expert_source = $additional_files[$i]['expert_source'];
-                echo '<div><a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
+                echo 'Эскпертное заключение: '.'<a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
             }
             if($additional_files[$i]['review_name']!=null or $additional_files[$i]['review_name']!=''){
                 $review_name = $additional_files[$i]['review_name'];
                 $review_source = $additional_files[$i]['review_source'];
-                echo '<div><a href="/web/'.$review_source.'">'.$review_name.'</a><br>';
+                echo 'Рецензия: '.'<a href="/web/'.$review_source.'">'.$review_name.'</a><br>';
             }
             if($additional_files[$i]['file_scan_name']!=null or $additional_files[$i]['file_scan_name']!=''){
                 $file_scan_name = $additional_files[$i]['file_scan_name'];
                 $file_scan_source = $additional_files[$i]['file_scan_source'];
-                echo '<div><a href="/web/'.$file_scan_source.'">'.$file_scan_name.'</a><br>';
+                echo 'Файл статьи с подписями: '.'<a href="/web/'.$file_scan_source.'">'.$file_scan_name.'</a><br>';
             }
         }
     }

@@ -272,7 +272,7 @@ class SiteController extends Controller
                     Yii::$app->session->setFlash('success', 'Черновик статьи успешно загружен');
                 }
                 else{
-                    Yii::$app->session->setFlash('success', 'Статья отправлена на Антиплагиат. Проверка займет до рабочих 3 дней.');
+                    Yii::$app->session->setFlash('success', 'Статья отправлена на проверку на Антиплагиат. Проверка займет до рабочих 3 дней');
                 }
                 return $this->redirect(['student-document']);
             } else {
@@ -303,10 +303,10 @@ class SiteController extends Controller
         $model = new Documents();
         $form = Yii::$app->request->post();
         $manager = User::find()->where(['id'=>$user_id])->one();
+        $form = $form['Documents'];
         if ($form==null or $form==[]){
             $flag = 1;
         }else {
-            $form = $form['Documents'];
             for ($i=0;$i<count($form);$i++){
                 $keys = array_keys($form);
                 $manager_model = new ManagerLogs();
@@ -452,7 +452,7 @@ class SiteController extends Controller
                 'pageSize' => 10,
             ],
         ]);
-        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->all();
+        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$id])->all();
         return $this->render('view',['dataProvider'=>$dataProvider,'student'=>$student,'additional_files'=>$additional_files]);
     }
     public function actionUpdate($id)
@@ -573,13 +573,14 @@ class SiteController extends Controller
 
     public function actionAdditionalStudentDocument()
     {
+        $document_id = $_GET['id'];
         $user_id = Yii::$app->user->id;
         $user = User::find()->where(['id'=>$user_id])->one();
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'manager'){
             return $this->redirect(['access-error']);
         }
-        $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->one();
+        $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->andWhere(['document_id'=>$document_id])->one();
         if($model==null){
             $model = new AdditionalFiles();
         }
@@ -590,6 +591,7 @@ class SiteController extends Controller
             $review =  mb_strtolower(UploadDocumentForm::transliterate($review));
             $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
             $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
+            $model->document_id = $document_id;
             if ($expert!='' and $review!='' and $file_scan!='')
             {
                 $model->expert = UploadedFile::getInstance($model, 'expert');
@@ -601,7 +603,7 @@ class SiteController extends Controller
                 $model->expert_source = 'UploadDocumentExpert/' . $expert;
                 $model->review_source = 'UploadDocumentReview/' . $review;
                 $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
-            }else if ($expert!='' or $review!='' and $file_scan==''){
+            }else if (($expert!='' or $review!='') and $file_scan==''){
                 if ($expert!=''){
                     $model->expert_name = $expert;
                     $model->expert_source = 'UploadDocumentExpert/' . $expert;
@@ -613,7 +615,7 @@ class SiteController extends Controller
                     $model->review = UploadedFile::getInstance($model, 'review');
                 }
             }
-            else if ($expert!=''or $file_scan!='' and $review==''){
+            else if (($expert!=''or $file_scan!='') and $review==''){
                 if ($file_scan!=''){
                     $model->file_scan_name = $file_scan;
                     $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
@@ -630,11 +632,12 @@ class SiteController extends Controller
                 $model->fio = $user['fio'];
                 $model->save();
                 Yii::$app->session->setFlash('success', 'Успешно');
-                return $this->redirect(['additional-student-document']);
+                return $this->redirect(['additional-student-document','id'=>$document_id]);
             }
         }
+        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->all();
 
 
-        return $this->render('additional-student-document',['model' => $model,]);
+        return $this->render('additional-student-document',['model' => $model,'additional_files'=>$additional_files]);
     }
 }

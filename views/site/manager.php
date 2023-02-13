@@ -121,7 +121,7 @@ $gridColumns = [
         ]);
         ?>
     </div>
-    <div style="margin-top: 50px;">
+    <div style="margin-top: 50px; width: 120%;margin-left: -120px">
         <?php
         $form = ActiveForm::begin();
         $attribs = $model->id;

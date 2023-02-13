@@ -12,6 +12,7 @@ class m230125_182222_additional_files extends Migration
         $this->createTable('additional_files', [
             'id' => $this->primaryKey(),
             'user_id'=>$this->integer(),
+            'document_id'=>$this->string(),
             'fio'=>$this->string(),
             'expert'=>$this->string(),
             'review'=>$this->string(),

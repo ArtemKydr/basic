@@ -29,7 +29,7 @@ class SignupForm extends Model
             'fio'=>'ФИО',
             'phone'=>'Телефон',
             'city'=>'Город',
-            'organization'=>'Организация'
+            'organization'=>'Организация (Полное название)'
         ];
     }
 
