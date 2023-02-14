@@ -50,6 +50,13 @@ $config = [
                 'password' => 'pTN-6ye-fW8-9Gf',
                 'port' => '465',
                 'encryption' => 'ssl',
+                'streamOptions' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ],
             ],
         ],
         'log' => [
