@@ -48,8 +48,8 @@ $config = [
                 'host' => 'smtp.yandex.ru',
                 'username' => 'studnauka.itmo@yandex.ru',
                 'password' => 'pTN-6ye-fW8-9Gf',
-                'port' => '25',
-                'encryption' => 'tsl',
+                'port' => '465',
+                'encryption' => 'ssl',
             ],
         ],
         'log' => [
