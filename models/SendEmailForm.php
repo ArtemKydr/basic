@@ -77,7 +77,7 @@ class SendEmailForm extends Model
         if($user):
             return Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
                 ->setFrom(['studnauka.itmo@yandex.ru' => 'имя отправителя'])
-                ->setTo($user)
+                ->setTo(['artemkydr1998@gmail.com' => 'имя получателя'])
                 ->setSubject('Смена статус о принятии материала "'.$title.'" к опубликованию.')
                 ->send();
         endif;
