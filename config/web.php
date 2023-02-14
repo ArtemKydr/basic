@@ -35,15 +35,14 @@ $config = [
             'errorAction' => 'site/error',
         ],
         'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'viewPath' => '@common/mail',
             'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'ssl://smtp.yandex.com',
+                'host' => 'smtp.yandex.ru',
                 'username' => 'studnauka.itmo@yandex.ru',
                 'password' => 'pTN-6ye-fW8-9Gf',
-                'port' => '465',
+                'port' => '25',
+                'encryption' => 'tls',
             ],
         ],
         'log' => [
