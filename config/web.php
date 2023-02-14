@@ -47,7 +47,7 @@ $config = [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.yandex.ru',
                 'username' => 'studnauka.itmo@yandex.ru',
-                'password' => 'dpnmoacfqfwfxmmc',
+                'password' => 'bjizlvgvqsiruyhk',
                 'port' => '465',
                 'encryption' => 'ssl',
             ],
