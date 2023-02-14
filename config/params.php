@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'senderEmail' => 'noreply@example.com',
-    'senderName' => 'Example.com mailer',
+    'adminEmail' => 'studnauka.itmo@yandex.ru',
+    'senderEmail' => 'studnauka.itmo@yandex.ru',
+    'senderName' => 'studnauka.itmo@yandex.ru',
     'bsVersion' => '4.x',
-    'supportEmail'=>'no-reply@itmo.com',
+    'supportEmail'=>'studnauka.itmo@yandex.ru',
     'secretKeyExpire'=>60*60
 ];
