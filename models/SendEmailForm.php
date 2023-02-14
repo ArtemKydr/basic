@@ -76,7 +76,7 @@ class SendEmailForm extends Model
         $fio = $student_id->fio;
         if($user):
             return Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
-                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                ->setFrom(['studnauka.itmo@yandex.ru' => 'имя отправителя'])
                 ->setTo($user)
                 ->setSubject('Смена статус о принятии материала "'.$title.'" к опубликованию.')
                 ->send();
