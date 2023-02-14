@@ -48,15 +48,8 @@ $config = [
                 'host' => 'smtp.yandex.ru',
                 'username' => 'studnauka.itmo@yandex.ru',
                 'password' => 'pTN-6ye-fW8-9Gf',
-                'port' => '465',
+                'port' => '25',
                 'encryption' => 'ssl',
-                'streamOptions' => [
-                    'ssl' => [
-                        'allow_self_signed' => true,
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                    ],
-                ],
             ],
         ],
         'log' => [
