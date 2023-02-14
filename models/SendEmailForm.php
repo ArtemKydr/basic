@@ -42,7 +42,7 @@ class SendEmailForm extends Model
             if($user->save()):
                 return Yii::$app->mailer->compose('resetPassword', ['user' => $user])
                     ->setFrom('studnauka.itmo@yandex.ru')
-                    ->setTo('artemkydr1998@gmail.com')
+                    ->setTo($this->email)
                     ->setSubject('Сброс пароля для '.Yii::$app->name)
                     ->send();
             endif;
@@ -59,8 +59,8 @@ class SendEmailForm extends Model
         $fio = $student_id->fio;
         if($user){
             Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
-                ->setFrom('studnauka.itmo@yandex.ru')
-                ->setTo('artemkydr1998@gmail.com')
+                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                ->setTo($user)
                 ->setSubject('Смена статуса документа '.$title)
                 ->send();
         }
@@ -76,8 +76,8 @@ class SendEmailForm extends Model
         $fio = $student_id->fio;
         if($user):
             return Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
-                ->setFrom('studnauka.itmo@yandex.ru')
-                ->setTo('artemkydr1998@gmail.com')
+                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                ->setTo($user)
                 ->setSubject('Смена статус о принятии материала "'.$title.'" к опубликованию.')
                 ->send();
         endif;
