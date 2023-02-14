@@ -34,6 +34,7 @@ class Documents extends ActiveRecord
             'coauthor'=>'соавторы',
             'collection'=>'Сборник',
             'draft_status'=>'Черновик/чистовик',
+            'count_additional_document'=>''
 
         ];
     }

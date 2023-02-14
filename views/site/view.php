@@ -82,7 +82,7 @@ $this->registerCss($css);
             if($additional_files[$i]['expert_name']!=null or $additional_files[$i]['expert_name']!=''){
                 $expert_name = $additional_files[$i]['expert_name'];
                 $expert_source = $additional_files[$i]['expert_source'];
-                echo 'Эскпертное заключение: '.'<a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
+                echo 'Экспертное заключение: '.'<a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
             }
             if($additional_files[$i]['review_name']!=null or $additional_files[$i]['review_name']!=''){
                 $review_name = $additional_files[$i]['review_name'];

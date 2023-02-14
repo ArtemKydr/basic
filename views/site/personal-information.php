@@ -10,6 +10,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $gridColumns = [
     [
+        'class'=>'yii\grid\ActionColumn',
+        'headerOptions' => ['style' => 'color:#337ab7'],
+        'headerOptions' => ['style' => 'width:3%'],
+        'template' => '{update}',
+        'urlCreator' => function ($action, $model, $key, $index) {
+
+            if ($action === 'update') {
+                $url ='/update-personal-information?id='.$model->id;
+                return $url;
+            }
+        }
+    ],
+    [
         'attribute' => 'fio',
         'format' => 'text',
         'label' => 'ФИО',
@@ -33,7 +46,7 @@ $gridColumns = [
         'attribute' => 'organization',
         'format' => 'text',
         'label' => 'Организация',
-    ]
+    ],
 
 
 
@@ -57,11 +70,16 @@ $gridColumns = [
         ]) ?>
     </div>
     <p>
-        Договор необходимо заполнить, распечатать и подписать <b>в двух экземплярах</b>.<br>
-        Согласие о персональных данных заполнить, распечатать и подписать в одном экземпляре.<br>
+        <b>Персональные данные</b><br>
+        <br>
+        (а) Договор необходимо заполнить, распечатать и подписать <b>в двух экземплярах</b>.<br>
+        (б) Согласие о персональных данных заполнить, распечатать и подписать <b>в одном экземпляре</b>.<br>
+        <br>
+        Распечатанные и подписанные файлы необходимо принести в часы работы УЦСНКиВ <b>до 27 марта 2023 года</b>.<br>
+        <br>
+        Время приема УЦСНКиВ: 11:00 - 17:00 (пн-пт)
 
-        Распечатанные файлы необходимо принести в часы работы УЦСНКиВ <b>до 27 марта 2023 года</b>.<br>
     </p>
-    <a href="https://drive.google.com/drive/folders/13dtCYw8L_V5DcLsk8SuCD7YWu7J2EMKP"><b>Шаблон персональных данных</b></a>
+    <a href="https://drive.google.com/drive/folders/13dtCYw8L_V5DcLsk8SuCD7YWu7J2EMKP"><b>Шаблон документов</b></a>
 
 </div>

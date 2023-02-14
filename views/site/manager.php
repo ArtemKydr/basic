@@ -21,9 +21,15 @@ vertical-align: middle !important;
 .select-on-check-all{
 display: none;
 }
-.skip-export.kv-align-center.kv-align-middle.w1.kv-row-select{
+.kv-all-select.kv-align-center.kv-align-middle.skip-export{
 display: none;
-width: 0;
+}
+.skip-export.kv-align-center.kv-align-middle.w5.kv-row-select{
+display: none;
+}
+.checkbox-count{
+width: 20px;
+height: 20px;
 }
 
 
@@ -171,6 +177,17 @@ $gridColumns = [
         $attribs['datetime'] = [
             'type'=>TabularForm::INPUT_STATIC,
             'widgetClass'=>\kartik\widgets\SwitchInput::classname()
+        ];
+        $attribs['count_additional_document'] = [
+            'type'=>TabularForm::INPUT_STATIC,
+            'widgetClass'=>\kartik\widgets\SwitchInput::classname(),
+            'value'=>function ($data) {
+                if ($data->count_additional_document==3){
+                    return '<div><img src="/web/images/checkmark_green.png" class="checkbox-count"/></div>';
+                }else{
+                    return '<div></div>';
+                }
+            },
         ];
         $attribs['source'] = [
             'type'=>TabularForm::INPUT_STATIC,

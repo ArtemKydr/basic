@@ -27,6 +27,7 @@ class m230105_130503_students_documents extends Migration
             'email' => $this->string(),
             'phone'=>$this->string(),
             'city' => $this->string(),
+            'count_additional_document'=>$this->integer(),
             'document_status' => 'ENUM("The article did not pass the originality test",
  "The article has been checked for originality", 
 "The article does not meet the requirements", 

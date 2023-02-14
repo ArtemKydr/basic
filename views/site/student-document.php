@@ -85,24 +85,19 @@ $gridColumns = $grid_columns = [
         'value'=>function ($data) {
             return Html::a(Html::encode("$data->title"),"/web/$data->source");},
         'label' => 'Название',
-
-    ],
-    [
-        'attribute' => 'title',
-        'format' => 'raw',
-        'value'=>function ($data) {
-            return Html::a(Html::encode("Загрузить"),"/additional-student-document?id=$data->id");},
-        'label' => 'Комплект док-ов',
+        'headerOptions' => ['style' => 'width:20%'],
 
     ],
     [
         'attribute' => 'authors',
         'format' => 'text',
         'label' => 'Авторы',
+        'headerOptions' => ['style' => 'width:10%'],
     ],[
         'attribute' => 'nr',
         'format' => 'text',
         'label' => 'Н/Р',
+        'headerOptions' => ['style' => 'width:10%'],
     ],[
         'attribute' => 'university',
         'format' => 'text',
@@ -124,7 +119,7 @@ $gridColumns = $grid_columns = [
         'attribute' => 'document_status',
         'format' => 'text',
         'label' => 'Статус',
-        'headerOptions' => ['style' => 'width:16%'],
+        'headerOptions' => ['style' => 'width:10%'],
         'value' => function ($data) {
 
             $rusDocumentStatus = ["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
@@ -146,6 +141,29 @@ $gridColumns = $grid_columns = [
         'attribute' => 'comment',
         'format' => 'text',
         'label' => 'Комментарий организатора',
+
+    ],
+    [
+        'class'=>'yii\grid\ActionColumn',
+        'headerOptions' => ['style' => 'color:#337ab7'],
+        'headerOptions' => ['style' => 'width:3%'],
+        'template' => '{update}{delete}',
+        'urlCreator' => function ($action, $model, $key, $index) {
+            if ($action === 'view') {
+                $url ='index.php?r=client-login/lead-view&id='.$model->id;
+                return $url;
+            }
+
+            if ($action === 'update') {
+                $url ='/additional-student-document?id='.$model->id;
+                return $url;
+            }
+            if ($action === 'delete') {
+                $url ='/delete-student-document?id='.$model->id;
+                return $url;
+            }
+
+        }
     ],
 
 ];
@@ -195,7 +213,7 @@ $gridColumns = $grid_columns = [
         <?php echo 'Количество статей, не прошедших проверку на оригинальность: '.$count_clear_document.'<br>'.$message ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'columns' => $gridColumns,
+            'columns' => $gridColumns
         ]) ?>
     </div>
 </div>

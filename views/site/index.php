@@ -1,5 +1,5 @@
 <?php
-$css =<<<CSS
+$css = <<<CSS
 
 .blue{
 background: #0069FF; 
@@ -115,6 +115,13 @@ background: #D8D8D8;
     width: 100%;
     }
 }
+.ref{
+color: white;
+background: linear-gradient(to left, #0069ff, #f9dd94 100%);
+background-position: 0 100%;
+background-size: 100% 2px;
+background-repeat: repeat-x;
+}
     
 
 
@@ -126,9 +133,9 @@ $this->registerCss($css);
     <h1>ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ<br> НАУЧНЫХ МЕРОПРИЯТИЙ ИТМО</h1>
     <div class="blue">
         <p class = "p-blue"style="font-weight: 400;font-size: 24px;">
-            Как узнать актуальные требования по оформлению материала?<br>
-            Как зарегистрировать свой личный кабинет?<br>
-            Как подать материал для публикации?<br>
+            Как узнать актуальные <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">требования</a> по оформлению материала?<br>
+            Как <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">зарегистрировать</a> свой личный кабинет?<br>
+            Как <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">подать</a> материал для публикации?<br>
         </p>
     </div>
     <div class="green">

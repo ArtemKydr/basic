@@ -99,4 +99,15 @@ class User extends ActiveRecord implements IdentityInterface
         $timestamp = (int) end($parts);
         return $timestamp + $expire >=time();
     }
+    public function attributeLabels()
+    {
+        return [
+            'email' => 'Электронная почта',
+            'password'=>'Пароль',
+            'fio'=>'ФИО',
+            'phone'=>'Телефон',
+            'city'=>'Город',
+            'organization'=>'Организация (Полное название)'
+        ];
+    }
 }

@@ -55,6 +55,9 @@ visibility: visible;
 .help-block{
 width: 20%;
 }
+.form-control{
+width: 48%;
+}
 CSS;
 $this->registerCss($css);
 
@@ -62,6 +65,9 @@ $this->registerCss($css);
 <div class="site-student-document" >
     <h1><?= Html::encode($this->title) ?></h1>
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
+    <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
+        <?= $form->field($document_model, 'title')->textInput() ?>
+    </div>
     <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
         <?= $form->field($model, 'expert')->fileInput() ?>
         <?= $form->field($model, 'review')->fileInput() ?>
@@ -83,7 +89,7 @@ $this->registerCss($css);
             if($additional_files[$i]['expert_name']!=null or $additional_files[$i]['expert_name']!=''){
                 $expert_name = $additional_files[$i]['expert_name'];
                 $expert_source = $additional_files[$i]['expert_source'];
-                echo 'Эскпертное заключение: '.'<a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
+                echo 'Экcпертное заключение: '.'<a href="/web/'.$expert_source.'">'.$expert_name.'</a><br>';
             }
             if($additional_files[$i]['review_name']!=null or $additional_files[$i]['review_name']!=''){
                 $review_name = $additional_files[$i]['review_name'];

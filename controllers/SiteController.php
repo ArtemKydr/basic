@@ -26,7 +26,7 @@ use app\models\ResetPasswordForm;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\UploadedFile;
-
+date_default_timezone_set("Europe/Moscow");
 class SiteController extends Controller
 {
 
@@ -228,6 +228,7 @@ class SiteController extends Controller
 
     public function actionStudentDocument()
     {
+        date_default_timezone_set("Europe/Moscow");
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'manager' or Yii::$app->user->isGuest){
@@ -457,7 +458,6 @@ class SiteController extends Controller
     }
     public function actionUpdate($id)
     {
-
         $user_id = Yii::$app->user->id;
         $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
         if ($role === 'user'  or Yii::$app->user->isGuest){
@@ -511,7 +511,6 @@ class SiteController extends Controller
             elseif ($personal_data1!=$personal_data2 and $comment1==$comment2){
                 $manager_model->personal_data_status = $form['Documents']['personal_data'];
             }
-            ////c
             elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
                 $manager_model->document_status_change = $model->document_status;
                 $manager_model->comment = $model->comment;
@@ -581,10 +580,14 @@ class SiteController extends Controller
             return $this->redirect(['access-error']);
         }
         $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->andWhere(['document_id'=>$document_id])->one();
+        $document_model = Documents::find()->where(['user_id'=>$user_id])->andWhere(['id'=>$document_id])->one();
         if($model==null){
             $model = new AdditionalFiles();
         }
         if (Yii::$app->request->isPost) {
+            $title = $_POST['Documents']['title'];
+            $document_model->title = $title;
+            $document_model->save();
             $expert = $_FILES['AdditionalFiles']['name']['expert'];
             $expert = mb_strtolower(UploadDocumentForm::transliterate($expert));
             $review = $_FILES['AdditionalFiles']['name']['review'];
@@ -627,6 +630,38 @@ class SiteController extends Controller
                     $model->expert = UploadedFile::getInstance($model, 'expert');
                 }
             }
+            else if (($review!=''or $file_scan!='') and $expert==''){
+                if ($file_scan!=''){
+                    $model->file_scan_name = $file_scan;
+                    $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
+                    $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
+                }
+                if ($review!=''){
+                    $model->review_name = $review;
+                    $model->review_source = 'UploadDocumentReview/' . $review;
+                    $model->review = UploadedFile::getInstance($model, 'review');
+                }
+            }
+            $model->save();
+            $count_additional_files =0;
+            $expert_file_db = AdditionalFiles::find()->select('expert_name,expert_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+            $review_file_db = AdditionalFiles::find()->select('review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+            $file_scan_file_db = AdditionalFiles::find()->select('file_scan_name,file_scan_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+            $exist_check = [$expert_file_db['expert_name'],$review_file_db['review_name'],$file_scan_file_db['file_scan_name']];
+            for ($i=0;$i<3;$i++){
+                if ($exist_check[$i]){
+                    $count_additional_files +=1;
+                }
+            }
+            $model_document = Documents::findOne(['id' => $document_id]);
+            $model_document->count_additional_document = $count_additional_files;
+            $model_document->save();
+            if (Yii::$app->request->isPost) {
+                if ($count_additional_files==3){
+                    $model_document->document_status = 'In processing';
+                    $model_document->save();
+                }
+            }
             if ($model->upload()) {
                 $model->user_id = $user_id;
                 $model->fio = $user['fio'];
@@ -638,6 +673,38 @@ class SiteController extends Controller
         $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->all();
 
 
-        return $this->render('additional-student-document',['model' => $model,'additional_files'=>$additional_files]);
+        return $this->render('additional-student-document',['model' => $model,'additional_files'=>$additional_files,'document_model'=>$document_model]);
+    }
+    public function actionDeleteStudentDocument($id){
+        $document = Documents::find()->where(['!=','document_status','The article did not pass the originality test'])->andWhere(['id'=>$id])->one();
+        if($document){
+            $document->delete();
+            Yii::$app->session->setFlash('success', 'Статья удалена');
+            return $this->redirect(['student-document']);
+        }else{
+            Yii::$app->session->setFlash('error', 'Не удалось удалить статью');
+            return $this->redirect(['student-document']);
+        }
+    }
+    public function actionUpdatePersonalInformation($id){
+        $personal_information_model = User::findOne($id);
+        $document_personal_information = Documents::find()->where(['user_id'=>$id])->all();
+        if (Yii::$app->request->isPost) {
+            for ($i=0;$i<count($document_personal_information);$i++){
+                $document_personal_information_model = $document_personal_information[$i];
+                $document_personal_information_model->fio = $_POST['User']['fio'];
+                $document_personal_information_model->phone = $_POST['User']['phone'];
+                $document_personal_information_model->email = $_POST['User']['email'];
+                $document_personal_information_model->authors = $_POST['User']['fio'];
+                $document_personal_information_model->save();
+            }
+            $personal_information_model->fio = $_POST['User']['fio'];
+            $personal_information_model->phone = $_POST['User']['phone'];
+            $personal_information_model->email = $_POST['User']['email'];
+            $personal_information_model->save();
+            Yii::$app->session->setFlash('success', 'Успешно');
+        }
+        return $this->render('update-personal-information',['personal_information_model' => $personal_information_model]);
+
     }
 }
