@@ -41,9 +41,9 @@ class SendEmailForm extends Model
             $user->generateSecretKey();
             if($user->save()):
                 return Yii::$app->mailer->compose('resetPassword', ['user' => $user])
-                    ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                    ->setFrom([Yii::$app->params['supportEmail'] => 'studnauka.itmo.ru (отправлено роботом)'])
                     ->setTo($this->email)
-                    ->setSubject('Сброс пароля для '.Yii::$app->name)
+                    ->setSubject('Сброс пароля для '.'studnauka.itmo.ru')
                     ->send();
             endif;
         endif;
@@ -59,7 +59,7 @@ class SendEmailForm extends Model
         $fio = $student_id->fio;
         if($user){
             Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
-                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                ->setFrom([Yii::$app->params['supportEmail'] => 'studnauka.itmo.ru (отправлено роботом)'])
                 ->setTo($user)
                 ->setSubject('Смена статуса документа '.$title)
                 ->send();
@@ -76,7 +76,7 @@ class SendEmailForm extends Model
         $fio = $student_id->fio;
         if($user):
             return Yii::$app->mailer->compose('changeDocumentStatus', ['user' => $user,'fio'=>$fio,'title'=>$title])
-                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name.' (отправлено роботом)'])
+                ->setFrom([Yii::$app->params['supportEmail'] => 'studnauka.itmo.ru (отправлено роботом)'])
                 ->setTo($user)
                 ->setSubject('Смена статус о принятии материала "'.$title.'" к опубликованию.')
                 ->send();
