@@ -9,7 +9,8 @@
  */
 use yii\helpers\Html;
 
-echo 'Доброго времени суток, '.Html::encode($user->fio).'. ';
+echo 'Здравствуйте, '.Html::encode($user->fio).'!';
+echo '<br>';
 echo Html::a('Для смены пароля перейдите по этой ссылке.',
     Yii::$app->urlManager->createAbsoluteUrl(
         [
