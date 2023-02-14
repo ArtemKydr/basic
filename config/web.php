@@ -39,15 +39,12 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
-            'htmlLayout'=>false,
-            'textLayout'=>false,
-
+            'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'smtp.yandex.ru',
-                'username' => 'studnauka.itmo@yandex.ru',
-                'password' => 'bjizlvgvqsiruyhk',
+                'host' => 'smtp.gmail.com',
+                'username' => 'studnauka.itmo@gmail.com',
+                'password' => '123asdqwezxc',
                 'port' => '465',
                 'encryption' => 'ssl',
             ],
