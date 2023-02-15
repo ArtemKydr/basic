@@ -307,11 +307,11 @@ class SiteController extends Controller
         $action =$_POST['action'];
         if ($action=='search'){
             if($form['Documents']['title']!='' and $form['Documents']['fio']!=''){
-                $query = Documents::find()->where(['in','title',$form['Documents']['title']])->andWhere(['in','fio',$form['Documents']['fio']]);
+                $query = Documents::find()->where(['like','title',$form['Documents']['title']])->andWhere(['like','fio',$form['Documents']['fio']]);
             }elseif ($form['Documents']['title']!=''){
-                $query = Documents::find()->where(['in','title',$form['Documents']['title']]);
+                $query = Documents::find()->where(['like','title',$form['Documents']['title']]);
             }elseif($form['Documents']['fio']!=''){
-                $query = Documents::find()->where(['in','fio',$form['Documents']['fio']]);
+                $query = Documents::find()->where(['like','fio',$form['Documents']['fio']]);
             }else{
                 $query = Documents::find();
             }
