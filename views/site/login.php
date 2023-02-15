@@ -7,7 +7,7 @@
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 
-$this->title = 'Login';
+$this->title = 'Логин';
 $this->params['breadcrumbs'][] = $this->title;
 $css =<<<CSS
 .col-lg-1.col-form-label.mr-lg-3 {
