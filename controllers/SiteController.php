@@ -597,6 +597,7 @@ class SiteController extends Controller
             $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
             $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
             $model->document_id = $document_id;
+            $timestamp = date('dmYHis');
             if ($expert!='' and $review!='' and $file_scan!='')
             {
                 $model->expert = UploadedFile::getInstance($model, 'expert');
@@ -605,42 +606,42 @@ class SiteController extends Controller
                 $model->review_name = $review;
                 $model->expert_name = $expert;
                 $model->file_scan_name = $file_scan;
-                $model->expert_source = 'UploadDocumentExpert/' . $expert;
-                $model->review_source = 'UploadDocumentReview/' . $review;
-                $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
+                $model->expert_source = 'UploadDocumentExpert/'.$timestamp.'_' . $expert;
+                $model->review_source = 'UploadDocumentReview/' .$timestamp.'_' . $review;
+                $model->file_scan_source = 'UploadDocumentFileScan/' .$timestamp.'_' . $file_scan;
             }else if (($expert!='' or $review!='') and $file_scan==''){
                 if ($expert!=''){
                     $model->expert_name = $expert;
-                    $model->expert_source = 'UploadDocumentExpert/' . $expert;
+                    $model->expert_source = 'UploadDocumentExpert/' .$timestamp.'_' . $expert;
                     $model->expert = UploadedFile::getInstance($model, 'expert');
                 }
                 if ($review!=''){
                     $model->review_name = $review;
-                    $model->review_source = 'UploadDocumentReview/' . $review;
+                    $model->review_source = 'UploadDocumentReview/'.$timestamp.'_'  . $review;
                     $model->review = UploadedFile::getInstance($model, 'review');
                 }
             }
             else if (($expert!=''or $file_scan!='') and $review==''){
                 if ($file_scan!=''){
                     $model->file_scan_name = $file_scan;
-                    $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
+                    $model->file_scan_source = 'UploadDocumentFileScan/'.$timestamp.'_'  . $file_scan;
                     $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 }
                 if ($expert!=''){
                     $model->expert_name = $expert;
-                    $model->expert_source = 'UploadDocumentExpert/' . $expert;
+                    $model->expert_source = 'UploadDocumentExpert/'.$timestamp.'_'  . $expert;
                     $model->expert = UploadedFile::getInstance($model, 'expert');
                 }
             }
             else if (($review!=''or $file_scan!='') and $expert==''){
                 if ($file_scan!=''){
                     $model->file_scan_name = $file_scan;
-                    $model->file_scan_source = 'UploadDocumentFileScan/' . $file_scan;
+                    $model->file_scan_source = 'UploadDocumentFileScan/'.$timestamp.'_'  . $file_scan;
                     $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
                 }
                 if ($review!=''){
                     $model->review_name = $review;
-                    $model->review_source = 'UploadDocumentReview/' . $review;
+                    $model->review_source = 'UploadDocumentReview/'.$timestamp.'_'  . $review;
                     $model->review = UploadedFile::getInstance($model, 'review');
                 }
             }
