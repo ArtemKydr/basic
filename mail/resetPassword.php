@@ -9,14 +9,12 @@
  */
 use yii\helpers\Html;
 
-echo 'Здравствуйте, '.Html::encode($user->fio).'!';?>
-    <br>
-    <br>
-<?echo Html::a('Для смены пароля перейдите по этой ссылке.',
+echo 'Здравствуйте, '.Html::encode($user->fio).'!';
+echo ' ';
+echo Html::a('Для смены пароля перейдите по этой ссылке.',
     Yii::$app->urlManager->createAbsoluteUrl(
         [
             '/site/reset-password',
             'key' => $user->secret_key
         ]
     ));
-?>
