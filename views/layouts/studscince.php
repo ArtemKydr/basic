@@ -131,6 +131,7 @@ $this->registerCss($css);
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
                     ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
+                    ['label' => 'Требования', 'url' => ['/site/requirements']],
                     ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                         'url' => ['/site/logout'],
