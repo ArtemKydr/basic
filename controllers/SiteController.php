@@ -304,6 +304,26 @@ class SiteController extends Controller
         }
         $model = new Documents();
         $form = Yii::$app->request->post();
+        $action =$_POST['action'];
+        if ($action=='search'){
+            if($form['Documents']['title']!='' and $form['Documents']['fio']!=''){
+                $query = Documents::find()->where(['in','title',$form['Documents']['title']])->andWhere(['in','fio',$form['Documents']['fio']]);
+            }elseif ($form['Documents']['title']!=''){
+                $query = Documents::find()->where(['in','title',$form['Documents']['title']]);
+            }elseif($form['Documents']['fio']!=''){
+                $query = Documents::find()->where(['in','fio',$form['Documents']['fio']]);
+            }else{
+                $query = Documents::find();
+            }
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 25,
+                ],
+                'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
+            ]);
+            return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query,'model'=>$model]);
+        }
         $manager = User::find()->where(['id'=>$user_id])->one();
         $form = $form['Documents'];
         if ($form==null or $form==[]){

@@ -31,7 +31,16 @@ display: none;
 width: 20px;
 height: 20px;
 }
-
+.col-lg-offset-1.col-lg-11{
+width: 100%;
+display: flex;
+justify-content: end;
+margin: 0;
+}
+.btn.btn-search {
+background: gray;
+color:white;
+}
 
 
 CSS;
@@ -128,6 +137,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ]);
         ?>
+        <div style="margin-top: -92px">
+            <?php $searchForm = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
+            <div style="display: flex; margin-top: 20px; justify-content: end">
+                <div style="margin-right: 40px;width: 30%">
+                    <?= $searchForm->field($model, 'fio')->textInput() ?>
+                </div>
+                <div style="margin-right: 40px;width: 30%">
+                    <?= $searchForm->field($model, 'title')->textInput() ?>
+                </div>
+            </div>
+            <div class="col-lg-offset-1 col-lg-11">
+                <?= Html::submitButton('Поиск', [
+                    'class' => 'btn btn-search',
+                    'name'=>"action",
+                    'value'=>"search"]) ?>
+            </div>
+
+            <?php ActiveForm::end() ?>
+        </div>
     </div>
     <div style="margin-top: 50px; width: 120%;margin-left: -120px">
         <?php
