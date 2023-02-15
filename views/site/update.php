@@ -29,7 +29,10 @@ $rusDocumentStatus = ["The article did not pass the originality test"=>'Стат
 $form = ActiveForm::begin([
     'id' => 'update-form',
     'options' => ['class' => 'form-horizontal'],
-]) ?>
+]);
+$this->title = 'Карточка студента';
+$this->params['breadcrumbs'][] = $this->title;
+?>
 <h2 style="margin-bottom: 20px">Карточка студента: <?php echo $student['fio'] ?></h2>
 <?= $form->field($model, 'originality') ?>
 <?= $form->field($model, 'comment')->textarea()?>
@@ -50,16 +53,10 @@ $form = ActiveForm::begin([
         echo 'Пока изменений нет...';
     }
     for($i=0;$i<count($data);$i++){
-        if ($i == 0){
-            $personal_data_early = 0;
-            $document_status_change_early = 'Article under consideration';
-            $comment_change_early = ' ';
-        }else{
+
             $personal_data_early = $data[$i-1]['personal_data_status'];
             $document_status_change_early = $rusDocumentStatus[$data[$i-1]['document_status_change']];
             $comment_change_early = $data[$i-1]['comment'];
-
-        }
         $personal_data = $data[$i]['personal_data_status'];
 
         $document_status_change = $rusDocumentStatus[$data[$i]['document_status_change']];

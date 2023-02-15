@@ -34,11 +34,11 @@ class UploadDocumentForm extends Model
         ];
     }
 
-    public function upload()
+    public function upload($timestamp)
     {
         $name = mb_strtolower($this->file->baseName);
         $name = self::transliterate($name);
-            $this->file->saveAs('UploadDocument/' . $name . '.' . $this->file->extension);
+            $this->file->saveAs('UploadDocument/' . $name .'_'.$timestamp. '.' . $this->file->extension);
             return true;
     }
     public function attributeLabels()

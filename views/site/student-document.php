@@ -139,8 +139,15 @@ $gridColumns = $grid_columns = [
     ],
     [
         'attribute' => 'comment',
-        'format' => 'text',
+        'format' => 'raw',
         'label' => 'Комментарий организатора',
+        'value'=> function ($data) {
+                if ($data->comment==null){
+                    return '';
+                }else{
+                    return $data->comment;
+                }
+        },
 
     ],
     [

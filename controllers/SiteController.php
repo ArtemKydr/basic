@@ -242,12 +242,13 @@ class SiteController extends Controller
             $form = Yii::$app->request->post('UploadDocumentForm');
             $draft_status = Yii::$app->request->post()['action'];
             $model->file = UploadedFile::getInstance($model, 'file');
-            $result = $model->upload();
+            $timestamp = date('dmYHis');
+            $result = $model->upload($timestamp);
             if ($result==true){
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
                 $filename = UploadDocumentForm::transliterate($model->file->baseName);
-                $filename = mb_strtolower($filename).'.'.$model->file->extension;
+                $filename = mb_strtolower($filename).'_'.$timestamp.'.'.$model->file->extension;
                 $document->user_id = $user_id;
                 $document->title = $form['title'];
                 $document->fio = $user['fio'];
@@ -326,19 +327,19 @@ class SiteController extends Controller
                     return $this->redirect(['manager']);
                     die();
                 }
-                else if ($form[$document_id]['originality'] >=70 and $form[$document_id]['document_status']!='The article has been checked for originality'){
+                else if ($form[$document_id]['originality'] >=70 and $form[$document_id]['document_status']!='The article has been checked for originality' and isset($form[$document_id]['document_status'])){
                     if ($form[$document_id]['document_status']!='The article has been checked for originality'){
                         $model->document_status = $form[$document_id]['document_status'];
                     }else {
                         $model->document_status = 'The article has been checked for originality';
                     }
                 }
-                else if ($form[$document_id]['originality'] >=70){
+                else if ($form[$document_id]['originality'] >=70 and isset($form[$document_id]['document_status'])){
                     $model->document_status = 'The article has been checked for originality';
-                }else if ($form[$document_id]['originality'] !=''){
+                }else if ($form[$document_id]['originality'] !=''  and isset($form[$document_id]['document_status'])){
                     $model->document_status = 'Article under consideration';
                 } else {
-                    if (isset($form[$document_id]['document_status'])){
+                    if ($form[$document_id]['document_status']){
                         $model->document_status = $form[$document_id]['document_status'];
                     }else {
                         $model->document_status = 'In the draft';
@@ -433,6 +434,7 @@ class SiteController extends Controller
             'pagination' => [
                 'pageSize' => 25,
             ],
+            'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
         ]);
         return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query,'model'=>$model]);
     }
@@ -642,30 +644,30 @@ class SiteController extends Controller
                     $model->review = UploadedFile::getInstance($model, 'review');
                 }
             }
-            $model->save();
-            $count_additional_files =0;
-            $expert_file_db = AdditionalFiles::find()->select('expert_name,expert_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-            $review_file_db = AdditionalFiles::find()->select('review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-            $file_scan_file_db = AdditionalFiles::find()->select('file_scan_name,file_scan_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-            $exist_check = [$expert_file_db['expert_name'],$review_file_db['review_name'],$file_scan_file_db['file_scan_name']];
-            for ($i=0;$i<3;$i++){
-                if ($exist_check[$i]){
-                    $count_additional_files +=1;
-                }
-            }
-            $model_document = Documents::findOne(['id' => $document_id]);
-            $model_document->count_additional_document = $count_additional_files;
-            $model_document->save();
-            if (Yii::$app->request->isPost) {
-                if ($count_additional_files==3){
-                    $model_document->document_status = 'In processing';
-                    $model_document->save();
-                }
-            }
+
             if ($model->upload()) {
                 $model->user_id = $user_id;
                 $model->fio = $user['fio'];
                 $model->save();
+                $count_additional_files =0;
+                $expert_file_db = AdditionalFiles::find()->select('expert_name,expert_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+                $review_file_db = AdditionalFiles::find()->select('review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+                $file_scan_file_db = AdditionalFiles::find()->select('file_scan_name,file_scan_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
+                $exist_check = [$expert_file_db['expert_name'],$review_file_db['review_name'],$file_scan_file_db['file_scan_name']];
+                for ($i=0;$i<3;$i++){
+                    if ($exist_check[$i]){
+                        $count_additional_files +=1;
+                    }
+                }
+                $model_document = Documents::findOne(['id' => $document_id]);
+                $model_document->count_additional_document = $count_additional_files;
+                $model_document->save();
+                if (Yii::$app->request->isPost) {
+                    if ($count_additional_files==3){
+                        $model_document->document_status = 'In processing';
+                        $model_document->save();
+                    }
+                }
                 Yii::$app->session->setFlash('success', 'Успешно');
                 return $this->redirect(['additional-student-document','id'=>$document_id]);
             }

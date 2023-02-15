@@ -106,10 +106,12 @@ $gridColumns = [
 
 ];
 
+$this->title = 'Поданные заявки';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class ='site-index'>
     <div class="top" style="display: flex; justify-content: space-between">
-        <h2>Поданные заявки</h2>
+        <h1>Поданные заявки</h1>
     </div>
     <div>
         <h5><b>Выгрузка</b></h5>

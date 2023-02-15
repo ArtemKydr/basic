@@ -127,6 +127,8 @@ background-repeat: repeat-x;
 
 CSS;
 $this->registerCss($css);
+$this->title ='ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ НАУЧНЫХ МЕРОПРИЯТИЙ ИТМО';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class ='site-index' style="display: flex; flex-direction: column">
 

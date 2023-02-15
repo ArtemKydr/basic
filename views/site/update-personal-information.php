@@ -72,6 +72,7 @@ visibility: $visible;
 }
 CSS;
 $this->registerCss($css);
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-student-document" >
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>

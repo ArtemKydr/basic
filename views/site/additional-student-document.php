@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers;
 
-$this->title = 'Загрузка документов';
+$this->title = 'Загрузка дополнительных документов';
 $this->params['breadcrumbs'][] = $this->title;
 $css =<<<CSS
 .form-group {

@@ -65,6 +65,9 @@ width: 25%;
 }
 CSS;
 $this->registerCss($css);
+
+$this->title = 'Карточка студента';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h2 style="margin-bottom: 20px">Карточка студента: <?php echo $student['fio'] ?></h2>
 <?= GridView::widget([
