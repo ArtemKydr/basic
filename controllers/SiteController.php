@@ -452,7 +452,7 @@ class SiteController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 25,
+                'pageSize' => 50,
             ],
             'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
         ]);

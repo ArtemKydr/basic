@@ -41,7 +41,12 @@ margin: 0;
 background: gray;
 color:white;
 }
-
+.form-control-plaintext{
+font-size: 14px;
+}
+.skip-export.kv-align-center.kv-align-middle.w6.kv-row-select{
+display: none;
+}
 
 CSS;
 $this->registerCss($css);
@@ -83,7 +88,6 @@ $gridColumns = [
         'attribute' => 'document_status',
         'format' => 'text',
         'label' => 'Статус',
-        'headerOptions' => ['style' => 'width:16%'],
         'value' => function ($data) {
 
             $rusDocumentStatus = ["The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
@@ -194,7 +198,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 "Article under consideration"=>'Статья на рассмотрении',
             ],
             'widgetClass'=>\kartik\widgets\SwitchInput::classname(),
-            'columnOptions'=>['width'=>'185px']
         ];
         $attribs['originality']['originality'] = [
             'type'=>TabularForm::INPUT_WIDGET,
@@ -206,7 +209,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
         $attribs['datetime'] = [
             'type'=>TabularForm::INPUT_STATIC,
-            'widgetClass'=>\kartik\widgets\SwitchInput::classname()
+            'widgetClass'=>\kartik\widgets\SwitchInput::classname(),
         ];
         $attribs['count_additional_document'] = [
             'type'=>TabularForm::INPUT_STATIC,
@@ -221,10 +224,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
         $attribs['source'] = [
             'type'=>TabularForm::INPUT_STATIC,
-            'columnOptions'=>['width'=>'150px',],
             'value'=>function ($data) {
                 return Html::a(Html::encode("$data->title"),"/web/$data->source");},
-
         ];
         $attribs['comment']['comment'] = [
             'type'=>TabularForm::INPUT_WIDGET,

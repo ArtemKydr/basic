@@ -9,13 +9,6 @@ use yii\bootstrap4\Html;
 
 $this->title = 'Логин';
 $this->params['breadcrumbs'][] = $this->title;
-$css =<<<CSS
-.col-lg-1.col-form-label.mr-lg-3 {
-margin-right:20px !important; ;
-}
-
-CSS;
-$this->registerCss($css);
 ?>
 <div class="site-login">
     <h1>Авторизация</h1>
@@ -50,3 +43,11 @@ $this->registerCss($css);
     <?php ActiveForm::end(); ?>
     <?= Html::a('Забыли пароль?', ['/site/send-email']) ?>
 </div>
+<?php
+$css =<<<CSS
+.col-lg-1.col-form-label.mr-lg-3 {
+margin-right:40px !important;
+}
+
+CSS;
+$this->registerCss($css);
