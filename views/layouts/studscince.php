@@ -83,7 +83,7 @@ $this->registerCss($css);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
-    <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => "/web/images/favicon.png"]); ?>
+    <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => "/web/images/faviс-stud.png"]); ?>
     <?php $this->head() ?>
 </head>
 <body class="d-flex flex-column h-100">
