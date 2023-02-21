@@ -203,13 +203,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'type'=>TabularForm::INPUT_WIDGET,
             'widgetClass'=>\kartik\widgets\SwitchInput::classname(),
         ];
-        $attribs['university'] = [
-            'type'=>TabularForm::INPUT_STATIC,
-            'widgetClass'=>\kartik\widgets\SwitchInput::classname()
-        ];
         $attribs['datetime'] = [
             'type'=>TabularForm::INPUT_STATIC,
             'widgetClass'=>\kartik\widgets\SwitchInput::classname(),
+
         ];
         $attribs['count_additional_document'] = [
             'type'=>TabularForm::INPUT_STATIC,
