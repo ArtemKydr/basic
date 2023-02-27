@@ -47,6 +47,12 @@ font-size: 14px;
 .skip-export.kv-align-center.kv-align-middle.w6.kv-row-select{
 display: none;
 }
+.kv-panel-after{
+position: fixed;
+top: 50%;
+right: 180px;
+padding: 0;
+}
 
 CSS;
 $this->registerCss($css);

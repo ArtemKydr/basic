@@ -45,7 +45,105 @@ border: 2px solid #000000;
 .btn:hover {
 background: #D8D8D8;
 }
+.dark-blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 114px;
+height: 220px;
+left: 51px;
+top: 822px;
+
+border: 4px solid #0069FF;
+border-radius: 40px;
+}
+.dark-green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 369px;
+height: 137px;
+left: 72px;
+top: 725px;
+
+border: 4px solid #BFFF00;
+border-radius: 40px;
+}
+.blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 130px;
+height: 420px;
+left: 1836px;
+top: 128px;
+
+border: 4px solid #00CCFF;
+border-radius: 40px;
+}
+.green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 246px;
+height: 153px;
+left: 1774px;
+top: 260px;
+
+border: 4px solid #BFFF00;
+border-radius: 40px;
+}
 @media screen and (max-width: 480px) {
+
+.dark-blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 102px;
+height: 42px;
+left: 0px;
+top: 921px;
+
+border: 2px solid #0069FF;
+border-radius: 40px;
+transform: rotate(-90deg);
+}
+.dark-green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 248px;
+height: 42px;
+left: 51px;
+top: 935px;
+
+border: 2px solid #BFFF00;
+border-radius: 40px;
+}
+.blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 130px;
+height: 420px;
+left: 361px;
+top: 135px;
+
+border: 2px solid #00CCFF;
+border-radius: 40px;
+}
+.green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 246px;
+height: 153px;
+left: 308px;
+top: 180px;
+
+border: 2px solid #BFFF00;
+border-radius: 40px;
+}
     .p-blue {
         font-size: 16px !important;
     }
@@ -81,6 +179,57 @@ background: #D8D8D8;
     }
 }
 @media screen and (max-width: 820px) and (min-width: 481px) {
+
+.dark-blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 102px;
+height: 42px;
+left: 0px;
+top: 835px;
+
+border: 2px solid #0069FF;
+border-radius: 40px;
+transform: rotate(-90deg);
+}
+.dark-green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 248px;
+height: 42px;
+left: 51px;
+top: 844px;
+
+border: 2px solid #BFFF00;
+border-radius: 40px;
+}
+.blue-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 130px;
+height: 420px;
+left: 339px;
+top: 180px;
+
+border: 2px solid #00CCFF;
+border-radius: 40px;
+}
+.green-squad{
+box-sizing: border-box;
+
+position: absolute;
+width: 246px;
+height: 153px;
+left: 308px;
+top: 180px;
+
+border: 2px solid #BFFF00;
+border-radius: 40px;
+}
+
     .p-blue {
         font-size: 16px !important;
     }
@@ -131,7 +280,10 @@ $this->title ='ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ НАУЧНЫ�
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class ='site-index' style="display: flex; flex-direction: column">
-
+    <div class="green-squad">
+    </div>
+    <div class="blue-squad">
+    </div>
     <h1>ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ<br> НАУЧНЫХ МЕРОПРИЯТИЙ ИТМО</h1>
     <div class="blue">
         <p class = "p-blue"style="font-weight: 400;font-size: 24px;">
@@ -151,6 +303,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 до 15 марта
             </p>
         </div>
+    </div>
+    <div class="dark-green-squad">
+    </div>
+    <div class="dark-blue-squad">
     </div>
 </div>
 

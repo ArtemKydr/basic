@@ -29,7 +29,7 @@ class UploadDocumentForm extends Model
     {
         return [
             [['title','fio','organization','city','email','phone','file'],'required','message'=>'*'],
-            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'docx'],
+            [['file'], 'file', 'extensions' => 'docx'],
 
         ];
     }
@@ -63,10 +63,10 @@ class UploadDocumentForm extends Model
         ];
     }
     public static function transliterate($name) {
-        $cyr = array(' ',
+        $cyr = array('ы',' ',
             'ё',  'ж',  'х',  'ц',  'ч',  'щ',   'ш',  'ъ',  'э',  'ю',  'я',  'а', 'б', 'в', 'г', 'д', 'е', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'ь',
             'Ё',  'Ж',  'Х',  'Ц',  'Ч',  'Щ',   'Ш',  'Ъ',  'Э',  'Ю',  'Я',  'А', 'Б', 'В', 'Г', 'Д', 'Е', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Ь');
-        $lat = array('_',
+        $lat = array('i','_',
             'yo', 'zh', 'kh', 'ts', 'ch', 'shh', 'sh', '``', 'eh', 'yu', 'ya', 'a', 'b', 'v', 'g', 'd', 'e', 'z', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', '`',
             'Yo', 'Zh', 'Kh', 'Ts', 'Ch', 'Shh', 'Sh', '``', 'Eh', 'Yu', 'Ya', 'A', 'B', 'V', 'G', 'D', 'E', 'Z', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', '`');
         $name = str_replace($cyr, $lat, $name);

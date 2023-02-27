@@ -145,6 +145,10 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+    public function actionAboutCollections()
+    {
+        return $this->render('about-collections');
+    }
     public function actionPersonalInformation()
     {
         $user_id = Yii::$app->user->id;
@@ -452,7 +456,7 @@ class SiteController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 50,
+                'pageSize' => 100,
             ],
             'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
         ]);

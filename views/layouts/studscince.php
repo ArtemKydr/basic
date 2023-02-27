@@ -106,6 +106,7 @@ $this->registerCss($css);
                 'items' => [
                     ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
                     ['label' => 'Требования', 'url' => ['/site/requirements']],
+                    ['label' => 'О сборниках', 'url' => ['/site/about-collections']],
                     ['label' => 'Подать документы', 'url' => ['/site/student-document']],
                     ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
                     ['label' => 'Контакты', 'url' => ['/site/contact']],
@@ -119,6 +120,7 @@ $this->registerCss($css);
                 'items' => [
                     ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
                     ['label' => 'Требования', 'url' => ['/site/requirements']],
+                    ['label' => 'О сборниках', 'url' => ['/site/about-collections']],
                     ['label' => 'Подать документы', 'url' => ['/site/student-document']],
                     ['label' => 'Контакты', 'url' => ['/site/contact']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
@@ -132,6 +134,7 @@ $this->registerCss($css);
                 'items' => [
                     ['label' => 'Личная информация', 'url' => ['/site/personal-information']],
                     ['label' => 'Требования', 'url' => ['/site/requirements']],
+                    ['label' => 'О сборниках', 'url' => ['/site/about-collections']],
                     ['label' => 'Поданные заявки', 'url' => ['/site/manager']],
                     ['label' => 'Выход (' . Yii::$app->user->identity->email . ')',
                         'url' => ['/site/logout'],
