@@ -93,6 +93,10 @@ top: 260px;
 border: 4px solid #BFFF00;
 border-radius: 40px;
 }
+.p-blue{
+font-weight: 400;
+font-size: 24px;
+}
 @media screen and (max-width: 480px) {
 
 .dark-blue-squad{
@@ -179,7 +183,6 @@ border-radius: 40px;
     }
 }
 @media screen and (max-width: 820px) and (min-width: 481px) {
-
 .dark-blue-squad{
 box-sizing: border-box;
 
@@ -271,6 +274,12 @@ background-position: 0 100%;
 background-size: 100% 2px;
 background-repeat: repeat-x;
 }
+@media screen and (max-width: 1350px) and (min-width: 821px) {
+.p-blue{
+font-weight: 400;
+font-size: 20px;
+}
+}
     
 
 
@@ -286,7 +295,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <h1>ПОДАЧА МАТЕРИАЛОВ ПО ИТОГАМ<br> НАУЧНЫХ МЕРОПРИЯТИЙ ИТМО</h1>
     <div class="blue">
-        <p class = "p-blue"style="font-weight: 400;font-size: 24px;">
+        <p class = "p-blue">
             Как узнать актуальные <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">требования</a> по оформлению материала?<br>
             Как <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">зарегистрировать</a> свой личный кабинет?<br>
             Как <a class="ref" href="https://docs.google.com/document/d/1fNIDKphzYuISFFnWjXrqT4yeSjknbDmJeNYKAFJFIbo/edit">подать</a> материал для публикации?<br>

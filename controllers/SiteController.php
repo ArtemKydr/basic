@@ -8,6 +8,7 @@ use app\models\Documents;
 use app\models\image\form\UploadForm;
 use app\models\image\image;
 use app\models\ManagerLogs;
+use app\models\UploadChangeDocumentForm;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Html;
@@ -145,14 +146,16 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
     public function actionAboutCollections()
     {
         return $this->render('about-collections');
     }
+
     public function actionPersonalInformation()
     {
         $user_id = Yii::$app->user->id;
-        $query = User::find()->where(['id'=>$user_id]);
+        $query = User::find()->where(['id' => $user_id]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -160,8 +163,9 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('personal-information',['dataProvider'=>$dataProvider]);
+        return $this->render('personal-information', ['dataProvider' => $dataProvider]);
     }
+
     public function actionRequirements()
     {
         return $this->render('requirements');
@@ -234,12 +238,12 @@ class SiteController extends Controller
     {
         date_default_timezone_set("Europe/Moscow");
         $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager' or Yii::$app->user->isGuest){
+        $role = (User::find()->select('role')->where(['id' => $user_id])->column())[0];
+        if ($role === 'manager' or Yii::$app->user->isGuest) {
             return $this->redirect(['access-error']);
         }
-        $user = User::find()->where(['id'=>$user_id])->one();
-        $username = User::find()->select('fio')->where(['id'=>$user_id])->column();
+        $user = User::find()->where(['id' => $user_id])->one();
+        $username = User::find()->select('fio')->where(['id' => $user_id])->column();
 
         $model = new UploadDocumentForm();
         if (Yii::$app->request->post('UploadDocumentForm')) {
@@ -248,11 +252,11 @@ class SiteController extends Controller
             $model->file = UploadedFile::getInstance($model, 'file');
             $timestamp = date('dmYHis');
             $result = $model->upload($timestamp);
-            if ($result==true){
+            if ($result == true) {
                 $form = Yii::$app->request->post('UploadDocumentForm');
                 $document = new Documents();
                 $filename = UploadDocumentForm::transliterate($model->file->baseName);
-                $filename = mb_strtolower($filename).'_'.$timestamp.'.'.$model->file->extension;
+                $filename = mb_strtolower($filename) . '_' . $timestamp . '.' . $model->file->extension;
                 $document->user_id = $user_id;
                 $document->title = $form['title'];
                 $document->fio = $user['fio'];
@@ -264,7 +268,7 @@ class SiteController extends Controller
                 $document->phone = $user['phone'];
                 $document->collection = 'Almanac';
                 $document->draft_status = $draft_status;
-                if ($draft_status == 'draft'){
+                if ($draft_status == 'draft') {
                     $document->document_status = 'In the draft';
                 } else {
                     $document->document_status = 'Article under consideration';
@@ -274,10 +278,9 @@ class SiteController extends Controller
                 $document->datetime = date('d.m.Y H:i:s');
                 $document->source = 'UploadDocument/' . $filename;
                 $document->save(false);
-                if ($draft_status == 'draft'){
+                if ($draft_status == 'draft') {
                     Yii::$app->session->setFlash('success', 'Черновик статьи успешно загружен');
-                }
-                else{
+                } else {
                     Yii::$app->session->setFlash('success', 'Статья отправлена на проверку на Антиплагиат. Проверка займет до рабочих 3 дней');
                 }
                 return $this->redirect(['student-document']);
@@ -286,9 +289,9 @@ class SiteController extends Controller
                 return $this->redirect(['student-document']);
             }
         }
-        $count_clear_document = Documents::find()->where(['user_id'=>$user_id])->andWhere(['draft_status'=>'clear'])->andWhere(['document_status'=>'The article did not pass the originality test'])->count();
-        $query = Documents::find()->where(['email'=>$user['email']]);
-        $document_status_forms = Documents::find()->select('document_status')->where(['email'=>$user['email']])->column();
+        $count_clear_document = Documents::find()->where(['user_id' => $user_id])->andWhere(['draft_status' => 'clear'])->andWhere(['document_status' => 'The article did not pass the originality test'])->count();
+        $query = Documents::find()->where(['email' => $user['email']]);
+        $document_status_forms = Documents::find()->select('document_status')->where(['email' => $user['email']])->column();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -296,27 +299,27 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('student-document', ['model' => $model,'dataProvider'=>$dataProvider,'username'=>$username,'document_status_forms'=>$document_status_forms,'count_clear_document'=>$count_clear_document]);
+        return $this->render('student-document', ['model' => $model, 'dataProvider' => $dataProvider, 'username' => $username, 'document_status_forms' => $document_status_forms, 'count_clear_document' => $count_clear_document]);
     }
 
     public function actionManager()
     {
         $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user' or Yii::$app->user->isGuest){
+        $role = (User::find()->select('role')->where(['id' => $user_id])->column())[0];
+        if ($role === 'user' or Yii::$app->user->isGuest) {
             return $this->redirect(['access-error']);
         }
         $model = new Documents();
         $form = Yii::$app->request->post();
-        $action =$_POST['action'];
-        if ($action=='search'){
-            if($form['Documents']['title']!='' and $form['Documents']['fio']!=''){
-                $query = Documents::find()->where(['like','title',$form['Documents']['title']])->andWhere(['like','fio',$form['Documents']['fio']]);
-            }elseif ($form['Documents']['title']!=''){
-                $query = Documents::find()->where(['like','title',$form['Documents']['title']]);
-            }elseif($form['Documents']['fio']!=''){
-                $query = Documents::find()->where(['like','fio',$form['Documents']['fio']]);
-            }else{
+        $action = $_POST['action'];
+        if ($action == 'search') {
+            if ($form['Documents']['title'] != '' and $form['Documents']['fio'] != '') {
+                $query = Documents::find()->where(['like', 'title', $form['Documents']['title']])->andWhere(['like', 'fio', $form['Documents']['fio']]);
+            } elseif ($form['Documents']['title'] != '') {
+                $query = Documents::find()->where(['like', 'title', $form['Documents']['title']]);
+            } elseif ($form['Documents']['fio'] != '') {
+                $query = Documents::find()->where(['like', 'fio', $form['Documents']['fio']]);
+            } else {
                 $query = Documents::find();
             }
             $dataProvider = new ActiveDataProvider([
@@ -324,119 +327,104 @@ class SiteController extends Controller
                 'pagination' => [
                     'pageSize' => 25,
                 ],
-                'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
+                'sort' => ['defaultOrder' => ['datetime' => SORT_DESC]],
             ]);
-            return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query,'model'=>$model]);
+            return $this->render('manager', ['dataProvider' => $dataProvider, 'query' => $query, 'model' => $model]);
         }
-        $manager = User::find()->where(['id'=>$user_id])->one();
+        $manager = User::find()->where(['id' => $user_id])->one();
         $form = $form['Documents'];
-        if ($form==null or $form==[]){
+        if ($form == null or $form == []) {
             $flag = 1;
-        }else {
-            for ($i=0;$i<count($form);$i++){
+        } else {
+            for ($i = 0; $i < count($form); $i++) {
                 $keys = array_keys($form);
                 $manager_model = new ManagerLogs();
                 $document_id = $keys[$i];
                 $model = Documents::findOne($document_id);
-                $student_id = Documents::find()->select('user_id')->where(['id'=>$document_id])->one();
-                $student = User::find()->where(['id'=>$student_id])->one();
+                $student_id = Documents::find()->select('user_id')->where(['id' => $document_id])->one();
+                $student = User::find()->where(['id' => $student_id])->one();
                 $model->originality = $form[$document_id]['originality'];
-                if ((int)$form[$document_id]['originality']<70 and $form[$document_id]['originality'] !=''){
+                if ((int)$form[$document_id]['originality'] < 70 and $form[$document_id]['originality'] != '') {
                     $model->document_status = 'The article did not pass the originality test';
-                    if($form[$document_id]['document_status']!='The article did not pass the originality test'){
+                    if ($form[$document_id]['document_status'] != 'The article did not pass the originality test') {
                         Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                     }
-                }else if ((int)$form[$document_id]['originality']>=70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test'){
+                } else if ((int)$form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test') {
                     Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
                     return $this->redirect(['manager']);
                     die();
-                }
-                else if ($form[$document_id]['originality'] >=70 and $form[$document_id]['document_status']!='The article has been checked for originality' and isset($form[$document_id]['document_status'])){
-                    if ($form[$document_id]['document_status']!='The article has been checked for originality'){
+                } else if ($form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] != 'The article has been checked for originality' and isset($form[$document_id]['document_status'])) {
+                    if ($form[$document_id]['document_status'] != 'The article has been checked for originality') {
                         $model->document_status = $form[$document_id]['document_status'];
-                    }else {
+                    } else {
                         $model->document_status = 'The article has been checked for originality';
                     }
-                }
-                else if ($form[$document_id]['originality'] >=70 and isset($form[$document_id]['document_status'])){
+                } else if ($form[$document_id]['originality'] >= 70 and isset($form[$document_id]['document_status'])) {
                     $model->document_status = 'The article has been checked for originality';
-                }else if ($form[$document_id]['originality'] !=''  and isset($form[$document_id]['document_status'])){
+                } else if ($form[$document_id]['originality'] != '' and isset($form[$document_id]['document_status'])) {
                     $model->document_status = 'Article under consideration';
                 } else {
-                    if ($form[$document_id]['document_status']){
+                    if ($form[$document_id]['document_status']) {
                         $model->document_status = $form[$document_id]['document_status'];
-                    }else {
+                    } else {
                         $model->document_status = 'In the draft';
                     }
                 }
                 $model->personal_data = $form[$document_id]['personal_data'];
                 $model->comment = $form[$document_id]['comment'];
                 //////////////////////////////////////////
-                $check = Documents::find()->where(['id'=>$keys[$i]])->one();
+                $check = Documents::find()->where(['id' => $keys[$i]])->one();
                 $personal_data1 = $check['personal_data'];
                 $personal_data2 = $form[$document_id]['personal_data'];
                 $comment1 = $check['comment'];
                 $comment2 = $form[$document_id]['comment'];
-                if (isset($form[$document_id]['document_status'])){
+                if (isset($form[$document_id]['document_status'])) {
                     $document_status1 = $form[$document_id]['document_status'];
-                }else{
+                } else {
                     $document_status1 = 'In the draft';
                 }
                 $document_status2 = $check['document_status'];
                 $model->save(false);
 
-                if ($personal_data1==$personal_data2 and $comment1==$comment2 and $document_status1==$document_status2)
-                {
+                if ($personal_data1 == $personal_data2 and $comment1 == $comment2 and $document_status1 == $document_status2) {
                     continue;
-                }else if ($personal_data1!=$personal_data2 and $comment1!=$comment2){
+                } else if ($personal_data1 != $personal_data2 and $comment1 != $comment2) {
                     $manager_model->comment = $model->comment;
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                }
-                elseif ($personal_data1==$personal_data2 and $comment1!=$comment2 and $document_status1==$document_status2){
-                        $manager_model->comment = $model->comment;
-                }
-                elseif ($personal_data1!=$personal_data2 and $comment1==$comment2){
+                } elseif ($personal_data1 == $personal_data2 and $comment1 != $comment2 and $document_status1 == $document_status2) {
+                    $manager_model->comment = $model->comment;
+                } elseif ($personal_data1 != $personal_data2 and $comment1 == $comment2) {
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                }
-                ////c
-                elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
+                } ////c
+                elseif ($document_status1 != $document_status2 and $comment1 != $comment2) {///////////////
                     $manager_model->document_status_change = $model->document_status;
                     $manager_model->comment = $model->comment;
                     $change_document_email_model = new SendEmailForm();
                     $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                }
-                elseif ($document_status1==$document_status2 and $comment1!=$comment2){
+                } elseif ($document_status1 == $document_status2 and $comment1 != $comment2) {
                     $manager_model->comment = $model->comment;
-                }
-                elseif ($document_status1!=$document_status2 and $comment1==$comment2){
+                } elseif ($document_status1 != $document_status2 and $comment1 == $comment2) {
                     $manager_model->document_status_change = $model->document_status;
                     $change_document_email_model = new SendEmailForm();
                     $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                }
-                ////b
-                elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
+                } ////b
+                elseif ($personal_data1 != $personal_data2 and $document_status1 != $document_status2) {
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
                     $manager_model->document_status_change = $model->document_status;
                     $change_document_email_model = new SendEmailForm();
                     $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                }
-                elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
+                } elseif ($personal_data1 == $personal_data2 and $document_status1 != $document_status2) {
                     $manager_model->document_status_change = $model->document_status;
                     $change_document_email_model = new SendEmailForm();
                     $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                }
-                elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
+                } elseif ($personal_data1 != $personal_data2 and $document_status1 == $document_status2) {
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                }
-                else if ($personal_data1!=$personal_data2)
-                {
+                } else if ($personal_data1 != $personal_data2) {
                     $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                }
-                else if ($comment1!=$comment2) {
+                } else if ($comment1 != $comment2) {
 
                     $manager_model->comment = $model->comment;
-                }
-                else if ($document_status1!=$document_status2){
+                } else if ($document_status1 != $document_status2) {
 
                     $manager_model->document_status_change = $model->document_status;
                     $change_document_email_model = new SendEmailForm();
@@ -458,121 +446,109 @@ class SiteController extends Controller
             'pagination' => [
                 'pageSize' => 100,
             ],
-            'sort'=> ['defaultOrder' => ['datetime' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
         ]);
-        return $this->render('manager',['dataProvider'=>$dataProvider,'query'=>$query,'model'=>$model]);
+        return $this->render('manager', ['dataProvider' => $dataProvider, 'query' => $query, 'model' => $model]);
     }
+
     public function actionView($id)
     {
         $user_id = Yii::$app->user->id;
-        $user = Documents::find()->select('user_id')->where(['id'=>$id])->column();
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user' or Yii::$app->user->isGuest){
+        $user = Documents::find()->select('user_id')->where(['id' => $id])->column();
+        $role = (User::find()->select('role')->where(['id' => $user_id])->column())[0];
+        if ($role === 'user' or Yii::$app->user->isGuest) {
             return $this->redirect(['access-error']);
         }
-        $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
-        $student = User::find()->where(['id'=>$student_id])->one();
-        $query = Documents::find()->select('*')->where(['user_id'=>$user]);
+        $student_id = Documents::find()->select('user_id')->where(['id' => $id])->one();
+        $student = User::find()->where(['id' => $student_id])->one();
+        $query = Documents::find()->select('*')->where(['user_id' => $user]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
                 'pageSize' => 10,
             ],
         ]);
-        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$id])->all();
-        return $this->render('view',['dataProvider'=>$dataProvider,'student'=>$student,'additional_files'=>$additional_files]);
+        $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id' => $user])->andWhere(['document_id' => $id])->all();
+        return $this->render('view', ['dataProvider' => $dataProvider, 'student' => $student, 'additional_files' => $additional_files]);
     }
+
     public function actionUpdate($id)
     {
         $user_id = Yii::$app->user->id;
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'user'  or Yii::$app->user->isGuest){
+        $role = (User::find()->select('role')->where(['id' => $user_id])->column())[0];
+        if ($role === 'user' or Yii::$app->user->isGuest) {
             return $this->redirect(['access-error']);
         }
-        $student_id = Documents::find()->select('user_id')->where(['id'=>$id])->one();
-        $manager = User::find()->where(['id'=>$user_id])->one();
-        $student = User::find()->where(['id'=>$student_id])->one();
+        $student_id = Documents::find()->select('user_id')->where(['id' => $id])->one();
+        $manager = User::find()->where(['id' => $user_id])->one();
+        $student = User::find()->where(['id' => $student_id])->one();
         $manager_model = new ManagerLogs();
         $model = Documents::findOne($id);
-        if ($model->draft_status == 'draft'){
+        if ($model->draft_status == 'draft') {
             return $this->redirect(['access-error']);
         }
         $form = Yii::$app->request->post();
-        if ($model->load(Yii::$app->request->post())){
-            if ((int)$form['Documents']['originality']<70){
+        if ($model->load(Yii::$app->request->post())) {
+            if ((int)$form['Documents']['originality'] < 70) {
                 $model->document_status = 'The article did not pass the originality test';
-                if($form['document_status']!='The article did not pass the originality test'){
+                if ($form['document_status'] != 'The article did not pass the originality test') {
                     Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                    return $this->redirect(['update','id'=>$id]);
-
+                    return $this->redirect(['update', 'id' => $id]);
                 }
             }
-            if ((int)$form['Documents']['originality']>=70 and $form['Documents']['document_status'] == 'The article did not pass the originality test'){
+            if ((int)$form['Documents']['originality'] >= 70 and $form['Documents']['document_status'] == 'The article did not pass the originality test') {
                 Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                return $this->redirect(['update','id'=>$id]);
+                return $this->redirect(['update', 'id' => $id]);
             }
-            $personal_data_status = Documents::find()->select('personal_data')->where(['user_id'=>$student_id])->column();
+            $personal_data_status = Documents::find()->select('personal_data')->where(['user_id' => $student_id])->column();
             $model->comment = $form['Documents']['comment'];
             $model->originality = $form['Documents']['originality'];
 
-            $check = Documents::find()->where(['id'=>$id])->one();
+            $check = Documents::find()->where(['id' => $id])->one();
             $personal_data1 = $check['personal_data'];
-            $personal_data2 =  $check['personal_data'];
+            $personal_data2 = $check['personal_data'];
             $comment1 = $check['comment'];
-            $comment2 =  $form['Documents']['comment'];
-            $document_status1 =  $form['Documents']['document_status'];
+            $comment2 = $form['Documents']['comment'];
+            $document_status1 = $form['Documents']['document_status'];
             $document_status2 = $check['document_status'];
             $model->save();
-            if ($personal_data1==$personal_data2 and $comment1==$comment2 and $document_status1==$document_status2)
-            {
+            if ($personal_data1 == $personal_data2 and $comment1 == $comment2 and $document_status1 == $document_status2) {
                 Yii::$app->session->setFlash('success', 'Успешно');
-                return $this->redirect(['update','id'=>$id]);
-            }else if ($personal_data1!=$personal_data2 and $comment1!=$comment2){
+                return $this->redirect(['update', 'id' => $id]);
+            } else if ($personal_data1 != $personal_data2 and $comment1 != $comment2) {
                 $manager_model->comment = $model->comment;
                 $manager_model->personal_data_status = $form['Documents']['personal_data'];
-            }
-            elseif ($personal_data1==$personal_data2 and $comment1!=$comment2 and $document_status1==$document_status2){
+            } elseif ($personal_data1 == $personal_data2 and $comment1 != $comment2 and $document_status1 == $document_status2) {
                 $manager_model->comment = $model->comment;
-            }
-            elseif ($personal_data1!=$personal_data2 and $comment1==$comment2){
+            } elseif ($personal_data1 != $personal_data2 and $comment1 == $comment2) {
                 $manager_model->personal_data_status = $form['Documents']['personal_data'];
-            }
-            elseif ($document_status1!=$document_status2 and $comment1!=$comment2){///////////////
+            } elseif ($document_status1 != $document_status2 and $comment1 != $comment2) {///////////////
                 $manager_model->document_status_change = $model->document_status;
                 $manager_model->comment = $model->comment;
                 $change_document_email_model = new SendEmailForm();
                 $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
-            }
-            elseif ($document_status1==$document_status2 and $comment1!=$comment2){
+            } elseif ($document_status1 == $document_status2 and $comment1 != $comment2) {
                 $manager_model->comment = $model->comment;
-            }
-            elseif ($document_status1!=$document_status2 and $comment1==$comment2){
+            } elseif ($document_status1 != $document_status2 and $comment1 == $comment2) {
                 $manager_model->document_status_change = $model->document_status;
                 $change_document_email_model = new SendEmailForm();
                 $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
-            }
-            ////b
-            elseif ($personal_data1!=$personal_data2 and $document_status1!=$document_status2){
+            } ////b
+            elseif ($personal_data1 != $personal_data2 and $document_status1 != $document_status2) {
                 $manager_model->document_status_change = $model->document_status;
                 $change_document_email_model = new SendEmailForm();
                 $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
-            }
-            elseif ($personal_data1==$personal_data2 and $document_status1!=$document_status2){
+            } elseif ($personal_data1 == $personal_data2 and $document_status1 != $document_status2) {
                 $manager_model->document_status_change = $model->document_status;
                 $change_document_email_model = new SendEmailForm();
                 $change_document_email_model->sendEmailChangeDocumentStatusUpdate($id);
-            }
-            elseif ($personal_data1!=$personal_data2 and $document_status1==$document_status2){
-            }
-            else if ($personal_data1!=$personal_data2)
-            {
+            } elseif ($personal_data1 != $personal_data2 and $document_status1 == $document_status2) {
+            } else if ($personal_data1 != $personal_data2) {
                 $manager_model->personal_data_status = $check['personal_data'];;
-            }
-            else if ($comment1!=$comment2) {
+            } else if ($comment1 != $comment2) {
 
                 $manager_model->comment = $model->comment;
-            }
-            else if ($document_status1!=$document_status2){
+            } else if ($document_status1 != $document_status2) {
                 $manager_model->document_status_change = $model->document_status;
                 $change_document_email_model = new SendEmailForm();
                 $change_document_email_model->sendEmailChangeDocumentStatus($id);
@@ -585,10 +561,10 @@ class SiteController extends Controller
             $manager_model->datetime = date('d.m.Y H:i:s');
             $manager_model->save();
             Yii::$app->session->setFlash('success', 'Успешно');
-            return $this->redirect(['update','id'=>$id]);
+            return $this->redirect(['update', 'id' => $id]);
         }
-        $data = ManagerLogs::find()->where(['user_id'=>$student_id])->andWhere(['document_id'=>$id])->all();
-        return $this->render('update',['model'=>$model,'data'=>$data,'student'=>$student]);
+        $data = ManagerLogs::find()->where(['user_id' => $student_id])->andWhere(['document_id' => $id])->all();
+        return $this->render('update', ['model' => $model, 'data' => $data, 'student' => $student]);
     }
 
     public function actionAccessError()
@@ -600,16 +576,18 @@ class SiteController extends Controller
     {
         $document_id = $_GET['id'];
         $user_id = Yii::$app->user->id;
-        $user = User::find()->where(['id'=>$user_id])->one();
-        $role = (User::find()->select('role')->where(['id'=>$user_id])->column())[0];
-        if ($role === 'manager' or Yii::$app->user->isGuest){
+        $user = User::find()->where(['id' => $user_id])->one();
+        $role = (User::find()->select('role')->where(['id' => $user_id])->column())[0];
+        if ($role === 'manager' or Yii::$app->user->isGuest) {
             return $this->redirect(['access-error']);
         }
-        $model = AdditionalFiles::find()->where(['user_id'=>$user_id])->andWhere(['document_id'=>$document_id])->one();
-        $document_model = Documents::find()->where(['user_id'=>$user_id])->andWhere(['id'=>$document_id])->one();
-        if($model==null){
+        $model = AdditionalFiles::find()->where(['user_id' => $user_id])->andWhere(['document_id' => $document_id])->one();
+        $document_model = Documents::find()->where(['user_id' => $user_id])->andWhere(['id' => $document_id])->one();
+        $upload_document_model = new UploadChangeDocumentForm();
+        if ($model == null) {
             $model = new AdditionalFiles();
         }
+
         if (Yii::$app->request->isPost) {
             $title = $_POST['Documents']['title'];
             $document_model->title = $title;
@@ -617,91 +595,107 @@ class SiteController extends Controller
             $expert = $_FILES['AdditionalFiles']['name']['expert'];
             $expert = mb_strtolower(UploadDocumentForm::transliterate($expert));
             $review = $_FILES['AdditionalFiles']['name']['review'];
-            $review =  mb_strtolower(UploadDocumentForm::transliterate($review));
+            $review = mb_strtolower(UploadDocumentForm::transliterate($review));
             $file_scan = $_FILES['AdditionalFiles']['name']['file_scan'];
-            $file_scan =  mb_strtolower(UploadDocumentForm::transliterate($file_scan));
+            $file_scan = mb_strtolower(UploadDocumentForm::transliterate($file_scan));
             $model->document_id = $document_id;
             $timestamp = date('dmYHis');
-            if ($expert!='' and $review!='' and $file_scan!='')
-            {
-                $model->expert = UploadedFile::getInstance($model, 'expert');
-                $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
-                $model->review = UploadedFile::getInstance($model, 'review');
-                $model->review_name = $review;
-                $model->expert_name = $expert;
-                $model->file_scan_name = $file_scan;
-                $model->expert_source = 'UploadDocumentExpert/'.$timestamp.'_' . $expert;
-                $model->review_source = 'UploadDocumentReview/' .$timestamp.'_' . $review;
-                $model->file_scan_source = 'UploadDocumentFileScan/' .$timestamp.'_' . $file_scan;
-            }else if (($expert!='' or $review!='') and $file_scan==''){
-                if ($expert!=''){
-                    $model->expert_name = $expert;
-                    $model->expert_source = 'UploadDocumentExpert/' .$timestamp.'_' . $expert;
-                    $model->expert = UploadedFile::getInstance($model, 'expert');
-                }
-                if ($review!=''){
-                    $model->review_name = $review;
-                    $model->review_source = 'UploadDocumentReview/'.$timestamp.'_'  . $review;
-                    $model->review = UploadedFile::getInstance($model, 'review');
+            $originalty = $document_model->originality;
+            if ($originalty < 70 and $originalty!=null and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
+                Yii::$app->session->setFlash('error', 'Не удалось заменить файл статьи, так как статья не прошла проверку на оригинальность');
+            } else if($_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
+                $upload_document_model->file = UploadedFile::getInstance($upload_document_model, 'file');
+                $timestamp = date('dmYHis');
+                $result = $upload_document_model->upload($timestamp);
+                if ($result == true) {
+                    $filename = UploadDocumentForm::transliterate($upload_document_model->file->baseName);
+                    $filename = mb_strtolower($filename) . '_' . $timestamp . '.' . $upload_document_model->file->extension;
+                    $document_model->datetime = date('d.m.Y H:i:s');
+                    $document_model->source = 'UploadDocument/' . $filename;
+                    $document_model->save(false);
+                    Yii::$app->session->setFlash('success', 'Файл статьи успешно заменен');
                 }
             }
-            else if (($expert!=''or $file_scan!='') and $review==''){
-                if ($file_scan!=''){
-                    $model->file_scan_name = $file_scan;
-                    $model->file_scan_source = 'UploadDocumentFileScan/'.$timestamp.'_'  . $file_scan;
-                    $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
-                }
-                if ($expert!=''){
-                    $model->expert_name = $expert;
-                    $model->expert_source = 'UploadDocumentExpert/'.$timestamp.'_'  . $expert;
+            if ($expert != '' or $review != '' or $file_scan != ''){
+                if ($expert != '' and $review != '' and $file_scan != '') {
                     $model->expert = UploadedFile::getInstance($model, 'expert');
-                }
-            }
-            else if (($review!=''or $file_scan!='') and $expert==''){
-                if ($file_scan!=''){
-                    $model->file_scan_name = $file_scan;
-                    $model->file_scan_source = 'UploadDocumentFileScan/'.$timestamp.'_'  . $file_scan;
                     $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
-                }
-                if ($review!=''){
-                    $model->review_name = $review;
-                    $model->review_source = 'UploadDocumentReview/'.$timestamp.'_'  . $review;
                     $model->review = UploadedFile::getInstance($model, 'review');
+                    $model->review_name = $review;
+                    $model->expert_name = $expert;
+                    $model->file_scan_name = $file_scan;
+                    $model->expert_source = 'UploadDocumentExpert/' . $timestamp . '_' . $expert;
+                    $model->review_source = 'UploadDocumentReview/' . $timestamp . '_' . $review;
+                    $model->file_scan_source = 'UploadDocumentFileScan/' . $timestamp . '_' . $file_scan;
+                } else if (($expert != '' or $review != '') and $file_scan == '') {
+                    if ($expert != '') {
+                        $model->expert_name = $expert;
+                        $model->expert_source = 'UploadDocumentExpert/' . $timestamp . '_' . $expert;
+                        $model->expert = UploadedFile::getInstance($model, 'expert');
+                    }
+                    if ($review != '') {
+                        $model->review_name = $review;
+                        $model->review_source = 'UploadDocumentReview/' . $timestamp . '_' . $review;
+                        $model->review = UploadedFile::getInstance($model, 'review');
+                    }
+                } else if (($expert != '' or $file_scan != '') and $review == '') {
+                    if ($file_scan != '') {
+                        $model->file_scan_name = $file_scan;
+                        $model->file_scan_source = 'UploadDocumentFileScan/' . $timestamp . '_' . $file_scan;
+                        $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
+                    }
+                    if ($expert != '') {
+                        $model->expert_name = $expert;
+                        $model->expert_source = 'UploadDocumentExpert/' . $timestamp . '_' . $expert;
+                        $model->expert = UploadedFile::getInstance($model, 'expert');
+                    }
+                } else if (($review != '' or $file_scan != '') and $expert == '') {
+                    if ($file_scan != '') {
+                        $model->file_scan_name = $file_scan;
+                        $model->file_scan_source = 'UploadDocumentFileScan/' . $timestamp . '_' . $file_scan;
+                        $model->file_scan = UploadedFile::getInstance($model, 'file_scan');
+                    }
+                    if ($review != '') {
+                        $model->review_name = $review;
+                        $model->review_source = 'UploadDocumentReview/' . $timestamp . '_' . $review;
+                        $model->review = UploadedFile::getInstance($model, 'review');
+                    }
+
                 }
+
+                if ($model->upload()) {
+                    $model->user_id = $user_id;
+                    $model->fio = $user['fio'];
+                    $model->save();
+                    $count_additional_files = 0;
+                    $expert_file_db = AdditionalFiles::find()->select('expert_name,expert_source')->where(['user_id' => $user])->andWhere(['document_id' => $document_id])->one();
+                    $review_file_db = AdditionalFiles::find()->select('review_name,review_source')->where(['user_id' => $user])->andWhere(['document_id' => $document_id])->one();
+                    $file_scan_file_db = AdditionalFiles::find()->select('file_scan_name,file_scan_source')->where(['user_id' => $user])->andWhere(['document_id' => $document_id])->one();
+                    $exist_check = [$expert_file_db['expert_name'], $review_file_db['review_name'], $file_scan_file_db['file_scan_name']];
+                    for ($i = 0; $i < 3; $i++) {
+                        if ($exist_check[$i]) {
+                            $count_additional_files += 1;
+                        }
+                    }
+                    $model_document = Documents::findOne(['id' => $document_id]);
+                    $model_document->count_additional_document = $count_additional_files;
+                    $model_document->save();
+                    if (Yii::$app->request->isPost) {
+                        if ($count_additional_files == 3) {
+                            $model_document->document_status = 'In processing';
+                            $model_document->save();
+                        }
+                    }
+                }
+                Yii::$app->session->setFlash('success', 'Дополнительные файлы успешно загружены');
             }
 
-            if ($model->upload()) {
-                $model->user_id = $user_id;
-                $model->fio = $user['fio'];
-                $model->save();
-                $count_additional_files =0;
-                $expert_file_db = AdditionalFiles::find()->select('expert_name,expert_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-                $review_file_db = AdditionalFiles::find()->select('review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-                $file_scan_file_db = AdditionalFiles::find()->select('file_scan_name,file_scan_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->one();
-                $exist_check = [$expert_file_db['expert_name'],$review_file_db['review_name'],$file_scan_file_db['file_scan_name']];
-                for ($i=0;$i<3;$i++){
-                    if ($exist_check[$i]){
-                        $count_additional_files +=1;
-                    }
-                }
-                $model_document = Documents::findOne(['id' => $document_id]);
-                $model_document->count_additional_document = $count_additional_files;
-                $model_document->save();
-                if (Yii::$app->request->isPost) {
-                    if ($count_additional_files==3){
-                        $model_document->document_status = 'In processing';
-                        $model_document->save();
-                    }
-                }
-                Yii::$app->session->setFlash('success', 'Успешно');
-                return $this->redirect(['additional-student-document','id'=>$document_id]);
-            }
         }
         $additional_files = AdditionalFiles::find()->select('expert_name,expert_source,file_scan_name,file_scan_source,review_name,review_source')->where(['user_id'=>$user])->andWhere(['document_id'=>$document_id])->all();
+        return $this->render('additional-student-document',['model' => $model,'additional_files'=>$additional_files,'document_model'=>$document_model,'upload_document_model'=>$upload_document_model]);
 
-
-        return $this->render('additional-student-document',['model' => $model,'additional_files'=>$additional_files,'document_model'=>$document_model]);
     }
+
     public function actionDeleteStudentDocument($id){
         $document = Documents::find()->where(['!=','document_status','The article did not pass the originality test'])->andWhere(['id'=>$id])->one();
         if($document){

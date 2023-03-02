@@ -67,6 +67,7 @@ $this->registerCss($css);
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
     <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
         <?= $form->field($document_model, 'title')->textInput() ?>
+        <?= $form->field($upload_document_model, 'file')->fileInput() ?>
     </div>
     <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
         <?= $form->field($model, 'expert')->fileInput() ?>
