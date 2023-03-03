@@ -18,6 +18,7 @@ $css = <<<CSS
 .navbar.navbar-expand-md.navbar-dark.bg-dark.fixed-top.navbar{
 display: block;
 width: 100%;
+position: fixed;
 }
 .fixed-top {
 position: relative;
@@ -53,7 +54,7 @@ justify-content: flex-end;
 margin-top: 16px;
 }
 .container-body{
-margin: 20px 21% 20px 21%;
+margin: 160px 21% 20px 21%;
 }
 .navbar-dark .navbar-toggler {
   color: rgba(0,0,0,0.5);

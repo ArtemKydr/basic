@@ -600,10 +600,10 @@ class SiteController extends Controller
             $file_scan = mb_strtolower(UploadDocumentForm::transliterate($file_scan));
             $model->document_id = $document_id;
             $timestamp = date('dmYHis');
-            $originalty = $document_model->originality;
-            if ($originalty < 70 and $originalty!=null and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
+            $document_status_model = $document_model->document_status;
+            if ($document_status_model != 'The article did not pass the originality test' and $document_status_model != 'The article does not meet the requirements' and $document_status_model!=null and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
                 Yii::$app->session->setFlash('error', 'Не удалось заменить файл статьи, так как статья не прошла проверку на оригинальность');
-            } else if($_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
+            } else if(($document_status_model == 'The article did not pass the originality test' or $document_status_model == 'The article does not meet the requirements') and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
                 $upload_document_model->file = UploadedFile::getInstance($upload_document_model, 'file');
                 $timestamp = date('dmYHis');
                 $result = $upload_document_model->upload($timestamp);

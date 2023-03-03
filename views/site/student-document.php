@@ -138,6 +138,11 @@ $gridColumns = $grid_columns = [
         },
     ],
     [
+        'attribute' => 'originality',
+        'format' => 'raw',
+        'label' => 'Оригинальность%',
+    ],
+    [
         'attribute' => 'comment',
         'format' => 'raw',
         'label' => 'Комментарий организатора',
