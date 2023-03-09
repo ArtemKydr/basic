@@ -417,7 +417,7 @@ class SiteController extends Controller
                 'pagination' => [
                     'pageSize' => 500,
                 ],
-                'sort' => ['defaultOrder' => ['datetime' => SORT_DESC]],
+                'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
             ]);
             return $this->render('manager', ['dataProvider' => $dataProvider, 'query' => $query, 'model' => $model,'searchForm'=>$searchForm]);
         }
