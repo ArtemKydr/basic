@@ -20,7 +20,7 @@ $config = [
     ],
     'components' => [
         'session'=>[
-            'timeout'=>60*60*9,
+            'timeout'=>60*60*60*9,
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
