@@ -38,8 +38,11 @@ justify-content: end;
 margin: 0;
 }
 .btn.btn-search {
+position: relative;
 background: gray;
 color:white;
+top: 130px;
+right: -177px;
 }
 .form-control-plaintext{
 font-size: 14px;
@@ -52,6 +55,9 @@ position: fixed;
 top: 50%;
 right: 180px;
 padding: 0;
+}
+.form-group.highlight-addon.field-documents-count_additional_document{
+margin-top: -32px;
 }
 
 CSS;
@@ -117,6 +123,11 @@ $gridColumns = [
         'label' => 'Комментарий организатора',
     ],
     [
+        'attribute' => 'organization',
+        'format' => 'text',
+        'label' => 'ВУЗ',
+    ],
+    [
         'attribute' => 'datetime',
         'format' => 'text',
         'label' => 'Дата',
@@ -135,7 +146,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div>
         <h5><b>Выгрузка</b></h5>
         <?php
-        echo ExportMenu::widget([ 'dataProvider' => $dataProvider,
+        echo ExportMenu::widget(['dataProvider' => $dataProvider,
             'dropdownOptions' => [
                 'label' => 'Формат',
                             ],
@@ -143,25 +154,39 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Колонки',
                             ],
             'columns' => $gridColumns,
-            'clearBuffers' => true,//optional
 
         ]);
         ?>
         <div style="margin-top: -92px">
             <?php $searchForm = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
-            <div style="display: flex; margin-top: 20px; justify-content: end">
+            <div class="col-lg-offset-1 col-lg-11">
+                <?= Html::submitButton('Поиск', [
+                    'class' => 'btn btn-search',
+                    'name'=>"action",
+                    'value'=>"search"]) ?>
+            </div>
+            <div style="display: flex; margin-top: 60px; justify-content: end">
                 <div style="margin-right: 40px;width: 30%">
                     <?= $searchForm->field($model, 'fio')->textInput() ?>
                 </div>
                 <div style="margin-right: 40px;width: 30%">
                     <?= $searchForm->field($model, 'title')->textInput() ?>
                 </div>
-            </div>
-            <div class="col-lg-offset-1 col-lg-11">
-                <?= Html::submitButton('Поиск', [
-                    'class' => 'btn btn-search',
-                    'name'=>"action",
-                    'value'=>"search"]) ?>
+                <div style="margin-right: 40px;width: 30%">
+                    <?= $searchForm->field($model, 'document_status',['enableClientValidation' => false])->dropDownList(["-1"=>'Не имеет значения',"The article did not pass the originality test"=>'Статья не прошла проверку на оригинальность',
+                        "The article has been checked for originality"=>'Статья прошла проверку на оригинальность',
+                        "The article does not meet the requirements"=>'Статья не соответствует требованиям',
+                        "The article was rejected as an incomplete set of documents"=>'Статья отклонена, так как неполный комплект документов',
+                        "The article has been accepted for review"=>'Статья принята к рецензированию',
+                        "The article has been accepted for publication"=>'Статья принята к публикации',
+                        "In processing"=> 'В процессе',
+                        "Article under consideration"=>'Статья на рассмотрении',]);?>
+                </div>
+                <div style="margin-right: 40px;width: 24%;">
+                    <p>Доп.док-ты</p>
+                    <?= $searchForm->field($model, 'count_additional_document',['enableClientValidation' => false])->dropDownList(["-1"=>'Не имеет значения',"3"=>'Всё',
+                        "2"=>'Не все',]);?>
+                </div>
             </div>
 
             <?php ActiveForm::end() ?>

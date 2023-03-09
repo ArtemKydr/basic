@@ -313,23 +313,113 @@ class SiteController extends Controller
         $form = Yii::$app->request->post();
         $action = $_POST['action'];
         if ($action == 'search') {
-            if ($form['Documents']['title'] != '' and $form['Documents']['fio'] != '') {
-                $query = Documents::find()->where(['like', 'title', $form['Documents']['title']])->andWhere(['like', 'fio', $form['Documents']['fio']]);
-            } elseif ($form['Documents']['title'] != '') {
-                $query = Documents::find()->where(['like', 'title', $form['Documents']['title']]);
-            } elseif ($form['Documents']['fio'] != '') {
-                $query = Documents::find()->where(['like', 'fio', $form['Documents']['fio']]);
+            if ($form['Documents']['title'] != '' and $form['Documents']['fio'] != '' and $form['Documents']['document_status'] != '-1' and $form['Documents']['count_additional_document'] != '-1') {
+                if ($form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']])
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']])
+                        ->andWhere(['=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }
+            }
+            else if ($form['Documents']['title'] != '' and $form['Documents']['fio'] != '' and ($form['Documents']['document_status'] != '-1' or $form['Documents']['count_additional_document'] != '-1')) {
+                if($form['Documents']['document_status'] != '-1'){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']]);
+                }else if ($form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }
+            }else if ($form['Documents']['title'] == '' and $form['Documents']['fio'] != '' and ($form['Documents']['document_status'] != '-1' or $form['Documents']['count_additional_document'] != '-1')) {
+                if($form['Documents']['document_status'] != '-1'){
+                    $query = Documents::find()
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']]);
+                }else if ($form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']])
+                        ->andWhere(['=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }
+            }else if ($form['Documents']['title'] != '' and $form['Documents']['fio'] == '' and ($form['Documents']['document_status'] != '-1' or $form['Documents']['count_additional_document'] != '-1')) {
+                if($form['Documents']['document_status'] != '-1'){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']]);
+                }else if ($form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']])
+                        ->andWhere(['=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }
+            }else if ($form['Documents']['title'] == '' and $form['Documents']['fio'] == '' and ($form['Documents']['document_status'] != '-1' and $form['Documents']['count_additional_document'] != '-1')) {
+                if($form['Documents']['document_status'] != '-1' and $form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']])
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->andWhere(['=', 'document_status', $form['Documents']['document_status']])
+                        ->andWhere(['=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }
+            }
+            else if (($form['Documents']['title'] != '' or $form['Documents']['fio'] == '') and $form['Documents']['document_status'] == '-1' and $form['Documents']['count_additional_document'] == '-1') {
+                if($form['Documents']['title'] != ''){
+                    $query = Documents::find()
+                        ->where(['like', 'title', $form['Documents']['title']]);
+                }else{
+                    $query = Documents::find()
+                        ->andWhere(['like', 'fio', $form['Documents']['fio']]);
+                }
+            } else if (($form['Documents']['title'] == '' and $form['Documents']['fio'] == '') and $form['Documents']['document_status'] != '-1' and $form['Documents']['count_additional_document'] == '-1') {
+                $query = Documents::find()
+                    ->andWhere(['=', 'document_status', $form['Documents']['document_status']]);
+            } else if (($form['Documents']['title'] == '' and $form['Documents']['fio'] == '') and $form['Documents']['document_status'] == '-1' and $form['Documents']['count_additional_document'] != '-1') {
+                if ($form['Documents']['count_additional_document']=='2'){
+                    $query = Documents::find()
+                        ->andWhere(['<=', 'count_additional_document', $form['Documents']['count_additional_document']]);
+                }else {
+                    $query = Documents::find()
+                        ->where(['=', 'count_additional_document', (int)$form['Documents']['count_additional_document']]);
+                }
+            }else if (($form['Documents']['title'] == '' and $form['Documents']['fio'] != '') and $form['Documents']['document_status'] == '-1' and $form['Documents']['count_additional_document'] == '-1') {
+                $query = Documents::find()
+                    ->andWhere(['like', 'fio', $form['Documents']['fio']]);
+            }else if (($form['Documents']['title'] != '' and $form['Documents']['fio'] == '') and $form['Documents']['document_status'] == '-1' and $form['Documents']['count_additional_document'] == '-1') {
+                $query = Documents::find()
+                    ->andWhere(['like', 'title', $form['Documents']['title']]);
             } else {
                 $query = Documents::find();
             }
             $dataProvider = new ActiveDataProvider([
                 'query' => $query,
                 'pagination' => [
-                    'pageSize' => 25,
+                    'pageSize' => 500,
                 ],
                 'sort' => ['defaultOrder' => ['datetime' => SORT_DESC]],
             ]);
-            return $this->render('manager', ['dataProvider' => $dataProvider, 'query' => $query, 'model' => $model]);
+            return $this->render('manager', ['dataProvider' => $dataProvider, 'query' => $query, 'model' => $model,'searchForm'=>$searchForm]);
         }
         $manager = User::find()->where(['id' => $user_id])->one();
         $form = $form['Documents'];
@@ -346,15 +436,8 @@ class SiteController extends Controller
                 $model->originality = $form[$document_id]['originality'];
                 if ((int)$form[$document_id]['originality'] < 70 and $form[$document_id]['originality'] != '') {
                     $model->document_status = 'The article did not pass the originality test';
-                    if ($form[$document_id]['document_status'] != 'The article did not pass the originality test') {
-                        Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                    }
-                } else if ((int)$form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] == 'The article did not pass the originality test') {
-                    Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                    return $this->redirect(['manager']);
-                    die();
                 } else if ($form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] != 'The article has been checked for originality' and isset($form[$document_id]['document_status'])) {
-                    if ($form[$document_id]['document_status'] != 'The article has been checked for originality') {
+                    if ($form[$document_id]['document_status'] != 'The article has been checked for originality' and $form[$document_id]['document_status'] != 'The article did not pass the originality test' and $form[$document_id]['document_status'] != 'Article under consideration') {
                         $model->document_status = $form[$document_id]['document_status'];
                     } else {
                         $model->document_status = 'The article has been checked for originality';
@@ -444,7 +527,7 @@ class SiteController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 100,
+                'pageSize' => 500,
             ],
             'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
         ]);
@@ -489,16 +572,24 @@ class SiteController extends Controller
         }
         $form = Yii::$app->request->post();
         if ($model->load(Yii::$app->request->post())) {
-            if ((int)$form['Documents']['originality'] < 70) {
+            if ((int)$form['Documents']['originality'] < 70 and $form['Documents']['originality'] != '') {
                 $model->document_status = 'The article did not pass the originality test';
-                if ($form['document_status'] != 'The article did not pass the originality test') {
-                    Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                    return $this->redirect(['update', 'id' => $id]);
+            } else if ($form['Documents']['originality'] >= 70 and $form['Documents']['document_status'] != 'The article has been checked for originality' and isset($form['Documents']['document_status'])) {
+                if ($form['Documents']['document_status'] != 'The article has been checked for originality' and $form['Documents']['document_status'] != 'The article did not pass the originality test' and $form['Documents']['document_status'] != 'Article under consideration') {
+                    $model->document_status = $form['Documents']['document_status'];
+                } else {
+                    $model->document_status = 'The article has been checked for originality';
                 }
-            }
-            if ((int)$form['Documents']['originality'] >= 70 and $form['Documents']['document_status'] == 'The article did not pass the originality test') {
-                Yii::$app->session->setFlash('error', 'Не удалось. Измените статус или проверьте значение оригинальности');
-                return $this->redirect(['update', 'id' => $id]);
+            } else if ($form['Documents']['originality'] >= 70 and isset($form['Documents']['document_status'])) {
+                $model->document_status = 'The article has been checked for originality';
+            } else if ($form['Documents']['originality'] != '' and isset($form['Documents']['document_status'])) {
+                $model->document_status = 'Article under consideration';
+            } else {
+                if ($form['Documents']['document_status']) {
+                    $model->document_status = $form['Documents']['document_status'];
+                } else {
+                    $model->document_status = 'In the draft';
+                }
             }
             $personal_data_status = Documents::find()->select('personal_data')->where(['user_id' => $student_id])->column();
             $model->comment = $form['Documents']['comment'];
@@ -602,7 +693,7 @@ class SiteController extends Controller
             $timestamp = date('dmYHis');
             $document_status_model = $document_model->document_status;
             if ($document_status_model != 'The article did not pass the originality test' and $document_status_model != 'The article does not meet the requirements' and $document_status_model!=null and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
-                Yii::$app->session->setFlash('error', 'Не удалось заменить файл статьи, так как статья не прошла проверку на оригинальность');
+                Yii::$app->session->setFlash('error', 'Не удалось заменить файл статьи, так как файл статьи можно изменить при статусах "Статья не прошла проверку на оригинальность" и "Статья не соответствует требованиям"');
             } else if(($document_status_model == 'The article did not pass the originality test' or $document_status_model == 'The article does not meet the requirements') and $_FILES['UploadChangeDocumentForm']['name']['file']!=null) {
                 $upload_document_model->file = UploadedFile::getInstance($upload_document_model, 'file');
                 $timestamp = date('dmYHis');
@@ -710,6 +801,9 @@ class SiteController extends Controller
     public function actionUpdatePersonalInformation($id){
         $personal_information_model = User::findOne($id);
         $document_personal_information = Documents::find()->where(['user_id'=>$id])->all();
+        if ($id != Yii::$app->user->identity->id and Yii::$app->user->identity->role =='user') {
+            return $this->redirect(['access-error']);
+        }
         if (Yii::$app->request->isPost) {
             for ($i=0;$i<count($document_personal_information);$i++){
                 $document_personal_information_model = $document_personal_information[$i];
@@ -717,11 +811,13 @@ class SiteController extends Controller
                 $document_personal_information_model->phone = $_POST['User']['phone'];
                 $document_personal_information_model->email = $_POST['User']['email'];
                 $document_personal_information_model->authors = $_POST['User']['fio'];
+                $document_personal_information_model->organization = $_POST['User']['organization'];
                 $document_personal_information_model->save();
             }
             $personal_information_model->fio = $_POST['User']['fio'];
             $personal_information_model->phone = $_POST['User']['phone'];
             $personal_information_model->email = $_POST['User']['email'];
+            $personal_information_model->organization = $_POST['User']['organization'];
             $personal_information_model->save();
             Yii::$app->session->setFlash('success', 'Успешно');
         }

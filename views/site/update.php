@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
     "The article has been accepted for review"=>'Статья принята к рецензированию',
     "The article has been accepted for publication"=>'Статья принята к публикации',
     "In processing"=> 'В процессе',
-    "The article has been sent for Anti-plagiarism. The verification will take up to 3 days."=>'Статья отправлена на Антиплагиат. Проверка займет до 3 дней.',]);?>
+    "Article under consideration"=>'Статья на рассмотрении',]);?>
 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
 <?php ActiveForm::end() ?>
 <div style="margin-top: 20px">

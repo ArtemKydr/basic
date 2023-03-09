@@ -83,6 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($personal_information_model, 'fio',)->textInput() ?>
                 <?= $form->field($personal_information_model, 'email')->textInput() ?>
                 <?= $form->field($personal_information_model, 'phone')->textInput() ?>
+                <?= $form->field($personal_information_model, 'organization')->textInput() ?>
             </div>
         </div>
 

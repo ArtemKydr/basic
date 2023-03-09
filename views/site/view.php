@@ -56,6 +56,19 @@ $gridColumns = [
             return Html::a(Html::encode("$data->title"),"/web/$data->source");}
 
     ],
+    [
+        'class'=>'yii\grid\ActionColumn',
+        'headerOptions' => ['style' => 'color:#337ab7'],
+        'headerOptions' => ['style' => 'width:3%'],
+        'template' => '{update}',
+        'urlCreator' => function ($action, $model, $key, $index) {
+
+            if ($action === 'update') {
+                $url ='/update-personal-information?id='.$model->user_id;
+                return $url;
+            }
+        }
+    ],
 
 
 ];
