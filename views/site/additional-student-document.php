@@ -9,6 +9,11 @@ use yii\helpers;
 
 $this->title = 'Загрузка дополнительных документов';
 $this->params['breadcrumbs'][] = $this->title;
+if ($document_model->document_status != 'The article did not pass the originality test' and $document_model->document_status != 'The article does not meet the requirements'){
+    $display = 'none';
+}else{
+    $display = 'block';
+};
 $css =<<<CSS
 .form-group {
 display: flex;
@@ -58,16 +63,20 @@ width: 20%;
 .form-control{
 width: 48%;
 }
+.file-doc{
+display: $display;
+}
 CSS;
 $this->registerCss($css);
-
 ?>
 <div class="site-student-document" >
     <h1><?= Html::encode($this->title) ?></h1>
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
     <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
         <?= $form->field($document_model, 'title')->textInput() ?>
-        <?= $form->field($upload_document_model, 'file')->fileInput() ?>
+        <div class="file-doc">
+            <?= $form->field($upload_document_model, 'file')->fileInput() ?>
+        </div>
     </div>
     <div style="display: flex; justify-content: start; margin-bottom: 20px; flex-direction: column; margin-top: 40px">
         <?= $form->field($model, 'expert')->fileInput() ?>

@@ -431,88 +431,110 @@ class SiteController extends Controller
                 $manager_model = new ManagerLogs();
                 $document_id = $keys[$i];
                 $model = Documents::findOne($document_id);
+                $oldmodel = $model->attributes;
+                $result = array_diff($form[$document_id],$oldmodel);
                 $student_id = Documents::find()->select('user_id')->where(['id' => $document_id])->one();
                 $student = User::find()->where(['id' => $student_id])->one();
-                $model->originality = $form[$document_id]['originality'];
-                if ((int)$form[$document_id]['originality'] < 70 and $form[$document_id]['originality'] != '') {
-                    $model->document_status = 'The article did not pass the originality test';
-                } else if ($form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] != 'The article has been checked for originality' and isset($form[$document_id]['document_status'])) {
-                    if ($form[$document_id]['document_status'] != 'The article has been checked for originality' and $form[$document_id]['document_status'] != 'The article did not pass the originality test' and $form[$document_id]['document_status'] != 'Article under consideration') {
-                        $model->document_status = $form[$document_id]['document_status'];
-                    } else {
-                        $model->document_status = 'The article has been checked for originality';
+                if ($result!=null or $result!=[]){
+                    if (isset($result['originality'])){
+                        $model->originality = $form[$document_id]['originality'];
+                        if ((int)$form[$document_id]['originality'] < 70 and $form[$document_id]['originality'] != '') {
+                            $model->document_status = 'The article did not pass the originality test';
+                        } else if ($form[$document_id]['originality'] >= 70 and $form[$document_id]['document_status'] != 'The article has been checked for originality' and isset($form[$document_id]['document_status'])) {
+                            if ($form[$document_id]['document_status'] != 'The article has been checked for originality' and $form[$document_id]['document_status'] != 'The article did not pass the originality test' and $form[$document_id]['document_status'] != 'Article under consideration') {
+                                $model->document_status = $form[$document_id]['document_status'];
+                            } else {
+                                $model->document_status = 'The article has been checked for originality';
+                            }
+                        }
                     }
-                } else if ($form[$document_id]['originality'] >= 70 and isset($form[$document_id]['document_status'])) {
-                    $model->document_status = 'The article has been checked for originality';
-                } else if ($form[$document_id]['originality'] != '' and isset($form[$document_id]['document_status'])) {
-                    $model->document_status = 'Article under consideration';
-                } else {
-                    if ($form[$document_id]['document_status']) {
+                    if (isset($result['document_status'])) {
                         $model->document_status = $form[$document_id]['document_status'];
-                    } else {
-                        $model->document_status = 'In the draft';
+                        $manager_model->document_status_change = $form[$document_id]['document_status'];
+                        $change_document_email_model = new SendEmailForm();
+                        $change_document_email_model->sendEmailChangeDocumentStatus($document_id);;
+                    }
+                    if (isset($result['comment'])) {
+                        $model->comment = $form[$document_id]['comment'];
+                        $manager_model->comment = $form[$document_id]['comment'];
+                    }
+                    if (isset($result['personal_data'])) {
+                        $model->personal_data = $form[$document_id]['personal_data'];
+                        $manager_model->personal_data_status = $form[$document_id]['personal_data'];
                     }
                 }
-                $model->personal_data = $form[$document_id]['personal_data'];
-                $model->comment = $form[$document_id]['comment'];
-                //////////////////////////////////////////
-                $check = Documents::find()->where(['id' => $keys[$i]])->one();
-                $personal_data1 = $check['personal_data'];
-                $personal_data2 = $form[$document_id]['personal_data'];
-                $comment1 = $check['comment'];
-                $comment2 = $form[$document_id]['comment'];
-                if (isset($form[$document_id]['document_status'])) {
-                    $document_status1 = $form[$document_id]['document_status'];
-                } else {
-                    $document_status1 = 'In the draft';
-                }
-                $document_status2 = $check['document_status'];
-                $model->save(false);
-
-                if ($personal_data1 == $personal_data2 and $comment1 == $comment2 and $document_status1 == $document_status2) {
-                    continue;
-                } else if ($personal_data1 != $personal_data2 and $comment1 != $comment2) {
-                    $manager_model->comment = $model->comment;
-                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                } elseif ($personal_data1 == $personal_data2 and $comment1 != $comment2 and $document_status1 == $document_status2) {
-                    $manager_model->comment = $model->comment;
-                } elseif ($personal_data1 != $personal_data2 and $comment1 == $comment2) {
-                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                } ////c
-                elseif ($document_status1 != $document_status2 and $comment1 != $comment2) {///////////////
-                    $manager_model->document_status_change = $model->document_status;
-                    $manager_model->comment = $model->comment;
-                    $change_document_email_model = new SendEmailForm();
-                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                } elseif ($document_status1 == $document_status2 and $comment1 != $comment2) {
-                    $manager_model->comment = $model->comment;
-                } elseif ($document_status1 != $document_status2 and $comment1 == $comment2) {
-                    $manager_model->document_status_change = $model->document_status;
-                    $change_document_email_model = new SendEmailForm();
-                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                } ////b
-                elseif ($personal_data1 != $personal_data2 and $document_status1 != $document_status2) {
-                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                    $manager_model->document_status_change = $model->document_status;
-                    $change_document_email_model = new SendEmailForm();
-                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                } elseif ($personal_data1 == $personal_data2 and $document_status1 != $document_status2) {
-                    $manager_model->document_status_change = $model->document_status;
-                    $change_document_email_model = new SendEmailForm();
-                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                } elseif ($personal_data1 != $personal_data2 and $document_status1 == $document_status2) {
-                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                } else if ($personal_data1 != $personal_data2) {
-                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
-                } else if ($comment1 != $comment2) {
-
-                    $manager_model->comment = $model->comment;
-                } else if ($document_status1 != $document_status2) {
-
-                    $manager_model->document_status_change = $model->document_status;
-                    $change_document_email_model = new SendEmailForm();
-                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
-                }
+//                } else if ($form[$document_id]['originality'] >= 70 and isset($form[$document_id]['document_status'])) {
+//                    $model->document_status = 'The article has been checked for originality';
+//                } else if ($form[$document_id]['originality'] != '' and isset($form[$document_id]['document_status'])) {
+//                    $model->document_status = 'Article under consideration';
+//                } else {
+//                    if ($form[$document_id]['document_status']) {
+//                        $model->document_status = $form[$document_id]['document_status'];
+//                    } else {
+//                        $model->document_status = 'In the draft';
+//                    }
+//                }
+//                $model->personal_data = $form[$document_id]['personal_data'];
+//                $model->comment = $form[$document_id]['comment'];
+//                //////////////////////////////////////////
+//                $check = Documents::find()->where(['id' => $keys[$i]])->one();
+//                $personal_data1 = $check['personal_data'];
+//                $personal_data2 = $form[$document_id]['personal_data'];
+//                $comment1 = $check['comment'];
+//                $comment2 = $form[$document_id]['comment'];
+//                if (isset($form[$document_id]['document_status'])) {
+//                    $document_status1 = $form[$document_id]['document_status'];
+//                } else {
+//                    $document_status1 = 'In the draft';
+//                }
+//                $document_status2 = $check['document_status'];
+//                $model->save(false);
+//
+//                if ($personal_data1 == $personal_data2 and $comment1 == $comment2 and $document_status1 == $document_status2) {
+//                    continue;
+//                } else if ($personal_data1 != $personal_data2 and $comment1 != $comment2) {
+//                    $manager_model->comment = $model->comment;
+//                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+//                } elseif ($personal_data1 == $personal_data2 and $comment1 != $comment2 and $document_status1 == $document_status2) {
+//                    $manager_model->comment = $model->comment;
+//                } elseif ($personal_data1 != $personal_data2 and $comment1 == $comment2) {
+//                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+//                } ////c
+//                elseif ($document_status1 != $document_status2 and $comment1 != $comment2) {///////////////
+//                    $manager_model->document_status_change = $model->document_status;
+//                    $manager_model->comment = $model->comment;
+//                    $change_document_email_model = new SendEmailForm();
+//                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
+//                } elseif ($document_status1 == $document_status2 and $comment1 != $comment2) {
+//                    $manager_model->comment = $model->comment;
+//                } elseif ($document_status1 != $document_status2 and $comment1 == $comment2) {
+//                    $manager_model->document_status_change = $model->document_status;
+//                    $change_document_email_model = new SendEmailForm();
+//                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
+//                } ////b
+//                elseif ($personal_data1 != $personal_data2 and $document_status1 != $document_status2) {
+//                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+//                    $manager_model->document_status_change = $model->document_status;
+//                    $change_document_email_model = new SendEmailForm();
+//                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
+//                } elseif ($personal_data1 == $personal_data2 and $document_status1 != $document_status2) {
+//                    $manager_model->document_status_change = $model->document_status;
+//                    $change_document_email_model = new SendEmailForm();
+//                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
+//                } elseif ($personal_data1 != $personal_data2 and $document_status1 == $document_status2) {
+//                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+//                } else if ($personal_data1 != $personal_data2) {
+//                    $manager_model->personal_data_status = $form[$document_id]['personal_data'];
+//                } else if ($comment1 != $comment2) {
+//
+//                    $manager_model->comment = $model->comment;
+//                } else if ($document_status1 != $document_status2) {
+//
+//                    $manager_model->document_status_change = $model->document_status;
+//                    $change_document_email_model = new SendEmailForm();
+//                    $change_document_email_model->sendEmailChangeDocumentStatus($document_id);
+//                }
+                $model->save();
                 $manager_model->document_id = $document_id;
                 $manager_model->manager_id = $manager['id'];
                 $manager_model->user_id = $student['id'];
@@ -701,6 +723,7 @@ class SiteController extends Controller
                 if ($result == true) {
                     $filename = UploadDocumentForm::transliterate($upload_document_model->file->baseName);
                     $filename = mb_strtolower($filename) . '_' . $timestamp . '.' . $upload_document_model->file->extension;
+                    $document_model->document_status = 'Article under consideration';;
                     $document_model->datetime = date('d.m.Y H:i:s');
                     $document_model->source = 'UploadDocument/' . $filename;
                     $document_model->save(false);

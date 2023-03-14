@@ -46,6 +46,7 @@ right: -177px;
 }
 .form-control-plaintext{
 font-size: 14px;
+max-width: 200px;
 }
 .skip-export.kv-align-center.kv-align-middle.w6.kv-row-select{
 display: none;
